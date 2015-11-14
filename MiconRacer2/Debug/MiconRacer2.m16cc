@@ -1,0 +1,7 @@
+-lang=c
+-c
+-finfo
+-dir "C:\WorkSpace\MiconRacer2\MiconRacer2\Debug"
+-silent
+-R8C
+"C:\WorkSpace\MiconRacer2\MiconRacer2\MiconRacer2.c"

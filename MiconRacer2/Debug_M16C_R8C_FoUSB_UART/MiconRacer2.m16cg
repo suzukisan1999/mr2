@@ -1,0 +1,4 @@
+-R8C
+-nofloat
+-output="C:\WorkSpace\MiconRacer2\MiconRacer2\Debug_M16C_R8C_FoUSB_UART\MiconRacer2.lib"
+-O3

@@ -1,0 +1,7 @@
+-lang=c
+-c
+-finfo
+-dir "C:\WorkSpace\MiconRacer2\MiconRacer2\Debug_M16C_R8C_FoUSB_UART"
+-silent
+-R8C
+"C:\WorkSpace\MiconRacer2\MiconRacer2\MiconRacer2.c"
