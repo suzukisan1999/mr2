@@ -10,17 +10,7 @@ unsigned long	mr2_timer_count = 0;       // timer関数用
 volatile char	mr2_line_data = 0;	// 最新ラインパターン
 
 // position log
-unsigned char	mr2_pos_log[POS_MAX] ={
-	SENSOR_LR0,
-	SENSOR_LR0,
-	SENSOR_LR0,
-	SENSOR_LR0,
-	SENSOR_LR0,
-	SENSOR_LR0,
-	SENSOR_LR0,
-	SENSOR_LR0,
-	SENSOR_LR0,
-	SENSOR_LR0	};
+unsigned char	mr2_pos_log[POS_MAX] ={};
 	
 int	mr2_pos_ptr = (POS_MAX-1);
 
@@ -54,7 +44,7 @@ unsigned char mr2_sensor_check( void ){
 	unsigned char data;
 	while( (mr2_line_data & 0x80) == 0x00 );	// update flag check
 	mr2_line_data &= 0x7f;						// update flag clear
-	data = mr2_line_data;			
+	data = mr2_line_data;
 	return data;
 }
 

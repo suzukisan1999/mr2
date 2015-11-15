@@ -1,4 +1,4 @@
-Optimizing Linkage Editor (V.10.01.00.000)        15-Nov-2015 15:21:12
+Optimizing Linkage Editor (V.10.01.00.000)        16-Nov-2015 00:42:59
 
 *** Options ***
 
@@ -55,7 +55,7 @@ data_NEI
 data_NOI
                                   0000c0a4  0000c0a4         1   1
 program
-                                  0000c0a6  0000c5e8       543   2
+                                  0000c0a6  0000c7be       719   2
 vector
                                   0000fed8  0000ffd7       100   2
 fvector

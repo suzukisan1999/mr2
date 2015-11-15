@@ -4,4 +4,5 @@
 -dir "C:\WorkSpace\mr2\MiconRacer2\Debug"
 -silent
 -R8C
+-fD32
 "C:\WorkSpace\mr2\MiconRacer2\MiconRacer2.c"

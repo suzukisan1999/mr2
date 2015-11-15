@@ -1,4 +1,5 @@
 -R8C
+-fD32
 -nofloat
 -output="C:\WorkSpace\mr2\MiconRacer2\Debug\MiconRacer2.lib"
 -O3

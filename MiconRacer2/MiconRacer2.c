@@ -18,84 +18,166 @@
 #pragma CREG	_flg_	flg
 unsigned int	_flg_;
 
-
+	
 //------------------------------------------------------------------------------
 // メインプログラム
 //------------------------------------------------------------------------------
 
-void car_ctrl(	int vector,	int speed )
+void run_main( void )
 {
-	int motor_r;
- 	int motor_l;
-	int	vol = abs( vector );
+	unsigned char read_line = 0;
+	int i;
+	int	pos_log[POS_MAX];
+	int	ooc;
+	int	oop;
+	int	pos;
 
-	if( vector > 0 ){
-		motor_l = speed;
-	}else{
-		// minus, zero
-		motor_l = speed - vol;
-	}
-	
-	if( vector < 0 ){
-		motor_r = speed;
-	}else{
-		// plus, zero
-		motor_r = speed - vol;
-	}
-	//あとちゃんと計算する
-	
+	int	distance_def[9] = { -32, -21, -13, -5, 0, 5, 13, 21, 32 };
 
-	mr2_motor( motor_l, motor_r );
+	int len, len_p, diff, intg, dv, r_factor;
+	int coeff[3];	
+	int	vr, vl;
+	int	p_factor, i_factor, d_factor;
+
 	
+	// PID param
+	// ここから固定小数
+#define	FIXED_SHIFT		(10)
+
+	int dt = 1;		// 0.001  (1msを仮定)
+	int Tu = 512;	// 0.5
+	int Ku = 3072;
+
+/*
+	coeff[0] = 39321 * Ku;
+	coeff[1] = coeff[0] / (32768 * Tu);
+	coeff[2] = 4915 * Tu * Ku;
+*/
+	coeff[0] = 6144;
+	coeff[1] = 0;
+	coeff[2] = 0;
+	// ここまで固定小数
+	
+	ooc = 0;
+	len_p = 0;
+    while(1){		
+		read_line = mr2_sensor_check();		// ラインセンサーから最新情報を取得
+
+		// position log
+		for( i=POS_MAX-1; i>0; i-- ){
+			pos_log[i] = pos_log[i-1];
+		}
+		
+		switch( read_line ){
+			case SENSOR_LR0:	pos =  0; ooc = 0;	break;
+			case SENSOR_L1 :	pos = -1; ooc = 0;	break;
+			case SENSOR_L2 :	pos = -2; ooc = 0;	break;
+			case SENSOR_L3 :	pos = -3; ooc = 0;	break;
+			case SENSOR_R1 :	pos =  1; ooc = 0;	break;
+			case SENSOR_R2 :	pos =  2; ooc = 0;	break;
+			case SENSOR_R3 :	pos =  3; ooc = 0;	break;
+			case SENSOR_AW :
+				if( pos_log[1] > 0 ){
+					pos =  4;
+				} else if( pos_log[1] < 0 ){
+					pos = -4;
+				} else {
+					pos =  0;
+				}
+				ooc++;
+				break;
+			default :
+				pos = 0;
+				ooc++;
+				break;			
+		}
+		pos_log[0] = pos;
+		
+		
+#define	DISTANCE(x)		(distance_def[4+pos_log[x]])
+
+		// cource rounding factor		
+		r_factor = (DISTANCE(0)+DISTANCE(1)+DISTANCE(2))/3;
+
+		if( DISTANCE(0)==-21){ mr2_beep( Def_C3 ); }
+		if( DISTANCE(0)==-13){ mr2_beep( Def_D3 ); }
+		if( DISTANCE(0)== -5){ mr2_beep( Def_E3 ); }
+		if( DISTANCE(0)==  0){ mr2_beep( Def_F3 ); }
+		if( DISTANCE(0)==  5){ mr2_beep( Def_G3 ); }
+		if( DISTANCE(0)== 13){ mr2_beep( Def_A3 ); }
+		if( DISTANCE(0)== 21){ mr2_beep( Def_B3 ); }
+		
+		
+		// PID control
+		// ここから固定小数
+		len   = (DISTANCE(0)+r_factor)<<FIXED_SHIFT;
+		diff  = len-len_p;
+		intg  = (len+len_p)/2*dt;
+		len_p = len;
+		
+		p_factor = (coeff[0]*len )>>FIXED_SHIFT;
+		i_factor = (coeff[1]*intg)>>FIXED_SHIFT;
+		d_factor = (coeff[2]*diff)>>FIXED_SHIFT;
+		
+		dv = ( p_factor + i_factor + d_factor )>>FIXED_SHIFT;
+		// ここまで固定小数
+/*		
+		     if( dv < 10 ){ mr2_beep( Def_C4 ); }
+		else if( dv < 20 ){ mr2_beep( Def_D3 ); }
+		else if( dv < 30 ){ mr2_beep( Def_E3 ); }
+		else if( dv < 40 ){ mr2_beep( Def_F3 ); }
+		else if( dv < 50 ){ mr2_beep( Def_G3 ); }
+		else if( dv < 60 ){ mr2_beep( Def_A3 ); }
+		else if( dv < 70 ){ mr2_beep( Def_B3 ); }
+		else              { mr2_beep( Def_C4 ); }
+*/
+		vr = 50+dv;
+		vl = 50-dv;
+/*
+		if( dv > 0 ){
+			vr = 100;
+			vl = 100-(2*dv);
+		}else if( dv < 0 ){
+			vr = 100+(2*dv);
+			vl = 100;
+		}else{
+			vr = 100;
+			vl = 100;
+		}
+*/
+
+		oop=0;
+		if( vr > 100 ){ vr = 100; oop=1; mr2_beep( Def_C4 ); }
+		if( vr <   0 ){ vr =   0; oop=1; mr2_beep( Def_C3 ); }
+		if( vl > 100 ){ vl = 100; oop=1; mr2_beep( Def_C4 ); }		
+		if( vl <   0 ){ vl =   0; oop=1; mr2_beep( Def_C3 ); }
+//		if( oop == 0 ){ mr2_beep( 0 ); }
+		
+		if( ooc>300 ){
+			vr = 0;
+			vl = 0;
+		}
+		
+		mr2_motor( vr, vl );
+
+	}	// while(1)
+
 	return;
 }
 
 
 void main(void)
 {
-	unsigned char read_line = 0;
-	
 	DI();
 	if( (_flg_ & 0x02) == 0 ){
 		mr2_clock_init();
 	}
 	mr2_peri_init();
 	EI();
-	
+
 	while( mr2_pushsw() == 0 );	// スタートボタン押下待ち
-    while(1){		
-		
-		read_line = mr2_sensor_check();		// ラインセンサーから最新情報を取得
-		switch(read_line){				// ラインセンサーからの最新情報に応じた処理の分岐
-			case SENSOR_AW:				// ライン：なし (コースアウト時)
-				car_ctrl( 0, 0 );
-				break;
-			case SENSOR_LR0:			// ライン：中央 (車体:中央)
-				car_ctrl( 0, 100 );
-				break;
-			case SENSOR_L1:				// ライン：少し左 (車体:ラインより少し右に位置)
-				car_ctrl( -30, 100 );
-				break;
-			case SENSOR_R1:				// ライン：少し右 (車体:中央より少し左に位置)
-				car_ctrl(  30, 100 );
-				break;
-			case SENSOR_L2:				// ライン：左 (車体:ラインより右に位置)
-				car_ctrl( -60, 100 );
-				break;
-			case SENSOR_R2:				// ライン：右 (車体:ラインより左に位置)
-				car_ctrl(  60, 100 );
-				break;
-			case SENSOR_L3:				// ライン：大きく左 (車体:ラインより大きく右に位置)
-				car_ctrl( -60, 60 );
-				break;
-			case SENSOR_R3:				// ライン：大きく右 (車体:ラインより大きく左に位置)
-				car_ctrl(  60, 60 );
-				break;
-			default:					// LEDセンサー定義に存在しない入力信号
-				break;					// なにもしない
-			}
-	}
-	 
+
+	run_main();
 }
 
 

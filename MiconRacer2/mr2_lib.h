@@ -40,7 +40,7 @@
 
 #define CENTER_LINE     BLACK						// 中央ラインの色の設定
 
-#define MOTOR_LIMIT		(40)						// モータ最大出力 : 60%
+#define MOTOR_LIMIT		(80)						// モータ最大出力 : 60%
 #define OPTION_L        (MOTOR_LIMIT)				// 最大回転数設定
 #define OPTION_R        (MOTOR_LIMIT)
 
@@ -54,6 +54,8 @@
 #define SENSOR_R3		(                     0x01)	// 右(大) : ○○○●
 #define SENSOR_AB		(0x08 | 0x04 | 0x02 | 0x01)	// 全点灯 : ●●●● (AB:All Black)
 #define SENSOR_AW		(0x00)						// 全消灯 : ○○○○ (AW:All White)
+
+#define	OOC_MAX			(500)
 
 //------------------------------------------------------------------------------
 // グローバル変数の宣言

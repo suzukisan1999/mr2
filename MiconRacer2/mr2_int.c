@@ -35,7 +35,6 @@ void intAN0( void )
 	}
 
 	i &= 3;		// カウンタ i ループ用処理  ( 0→1→2→3→0→1→… ) 
-
 }
 
 
@@ -46,9 +45,6 @@ void intAN0( void )
 #pragma interrupt intTRAIC (vect=22)
 void intTRAIC( void )
 {
-	int i;
-	unsigned char pos[POS_MAX];
-	
         p0_7 = ~p0_7;
 
         if( p0_7 == 0 ){
@@ -71,24 +67,7 @@ void intTRAIC( void )
 #endif
         }
 		mr2_line_data = mr2_sensor();
-        mr2_timer_count++;
-
-		// position log
-		mr2_pos_push( mr2_line_data & 0x0f );
-		
-		// 姿勢推定
-		if( mr2_pos(0) > 0x0f ){
-			mr2_beep( Def_C3 );
-		}
-			
-#if 0		
-		mr2_pos_all( &pos[0] );
-		for( i=0; i<POS_MAX; i++ ){
-			if( pos[i] > 16 ){
-				mr2_beep( Def_C3 );
-			}
-		}
-#endif
+        mr2_timer_count++;		
 }
 
 
