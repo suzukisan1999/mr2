@@ -1,21 +1,23 @@
-Optimizing Linkage Editor (V.10.01.00.000)        14-Nov-2015 14:21:29
+Optimizing Linkage Editor (V.10.01.00.000)        15-Nov-2015 14:32:10
 
 *** Options ***
 
--subcommand=C:\WorkSpace\MiconRacer2\MiconRacer2\Debug_M16C_R8C_FoUSB_UART\MiconRacer2.m16cl
+-subcommand=C:\WorkSpace\mr2\MiconRacer2\Debug_M16C_R8C_FoUSB_UART\MiconRacer2.m16cl
 -noprelink
 -nodebug
 -nomessage
--list="C:\WorkSpace\MiconRacer2\MiconRacer2\Debug_M16C_R8C_FoUSB_UART\MiconRacer2.map"
+-list="C:\WorkSpace\mr2\MiconRacer2\Debug_M16C_R8C_FoUSB_UART\MiconRacer2.map"
 -nooptimize
 -start=data_SE,bss_SE,data_SO,bss_SO,data_NE,bss_NE,data_NO,bss_NO,stack,istack,heap_NE/0400,interrupt,rom_NE,rom_NO,data_SEI,data_SOI,data_NEI,data_NOI,switch_table,C$VTBL,program/0C000,vector/0FED8
 -nologo
 -stack
 -total_size
--library="C:\WorkSpace\MiconRacer2\MiconRacer2\Debug_M16C_R8C_FoUSB_UART\MiconRacer2.lib"
--input="C:\WorkSpace\MiconRacer2\MiconRacer2\Debug_M16C_R8C_FoUSB_UART\MiconRacer2.obj"
--input="C:\WorkSpace\MiconRacer2\MiconRacer2\Debug_M16C_R8C_FoUSB_UART\ncrt0.obj"
--output="C:\WorkSpace\MiconRacer2\MiconRacer2\Debug_M16C_R8C_FoUSB_UART\MiconRacer2.abs"
+-library="C:\WorkSpace\mr2\MiconRacer2\Debug_M16C_R8C_FoUSB_UART\MiconRacer2.lib"
+-input="C:\WorkSpace\mr2\MiconRacer2\Debug_M16C_R8C_FoUSB_UART\MiconRacer2.obj"
+-input="C:\WorkSpace\mr2\MiconRacer2\Debug_M16C_R8C_FoUSB_UART\mr2_int.obj"
+-input="C:\WorkSpace\mr2\MiconRacer2\Debug_M16C_R8C_FoUSB_UART\mr2_lib.obj"
+-input="C:\WorkSpace\mr2\MiconRacer2\Debug_M16C_R8C_FoUSB_UART\ncrt0.obj"
+-output="C:\WorkSpace\mr2\MiconRacer2\Debug_M16C_R8C_FoUSB_UART\MiconRacer2.abs"
 -change_message=information=1100,1322,1410
 -end
 
@@ -34,15 +36,15 @@ data_SO
 bss_SO
                                   00000400  00000400         0   1
 data_NE
-                                  00000400  00000419        1a   2
+                                  00000400  00000415        16   2
 bss_NE
-                                  0000041a  0000041d         4   2
+                                  00000416  00000419         4   2
 data_NO
-                                  0000041e  0000041e         1   1
+                                  0000041a  0000041a         1   1
 bss_NO
-                                  0000041f  0000041f         0   1
+                                  0000041b  0000041b         0   1
 istack
-                                  00000420  0000049f        80   2
+                                  0000041c  0000049b        80   2
 interrupt
                                   0000c000  0000c08c        8d   2
 data_SEI
@@ -50,11 +52,11 @@ data_SEI
 data_SOI
                                   0000c08d  0000c08d         0   1
 data_NEI
-                                  0000c08e  0000c0a7        1a   2
+                                  0000c08e  0000c0a3        16   2
 data_NOI
-                                  0000c0a8  0000c0a8         1   1
+                                  0000c0a4  0000c0a4         1   1
 program
-                                  0000c0aa  0000c504       45b   2
+                                  0000c0a6  0000c628       583   2
 vector
                                   0000fed8  0000ffd7       100   2
 fvector

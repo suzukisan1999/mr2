@@ -1,4 +1,4 @@
 -R8C
 -nofloat
--output="C:\WorkSpace\MiconRacer2\MiconRacer2\Debug\MiconRacer2.lib"
+-output="C:\WorkSpace\mr2\MiconRacer2\Debug\MiconRacer2.lib"
 -O3
