@@ -7,21 +7,19 @@
 [GENERAL_DATA]
 [BREAKPOINTS]
 [OPEN_WORKSPACE_FILES]
-"C:\WorkSpace\MiconRacer2\MiconRacer2\MiconRacer2.c" 
-"C:\WorkSpace\MiconRacer2\MiconRacer2\ncrt0.a30" 
 "C:\WorkSpace\mr2\MiconRacer2\MiconRacer2.c" 
 "C:\WorkSpace\mr2\MiconRacer2\mr2_int.c" 
 "C:\WorkSpace\mr2\MiconRacer2\mr2_lib.c" 
 "C:\WorkSpace\mr2\MiconRacer2\mr2_lib.h" 
+"C:\WorkSpace\mr2\MiconRacer2\ncrt0.a30" 
 "C:\WorkSpace\mr2\MiconRacer2\sfr_r834c.h" 
 [WORKSPACE_FILE_STATES]
-"C:\WorkSpace\MiconRacer2\MiconRacer2\MiconRacer2.c" 0 0 1484 693 0 0 
-"C:\WorkSpace\MiconRacer2\MiconRacer2\ncrt0.a30" 125 125 738 455 0 5 
-"C:\WorkSpace\mr2\MiconRacer2\MiconRacer2.c" -8 -30 1484 693 1 1 
-"C:\WorkSpace\mr2\MiconRacer2\mr2_int.c" 50 50 1268 455 0 2 
-"C:\WorkSpace\mr2\MiconRacer2\mr2_lib.c" 75 75 1268 455 0 3 
-"C:\WorkSpace\mr2\MiconRacer2\mr2_lib.h" 100 100 1268 455 0 4 
-"C:\WorkSpace\mr2\MiconRacer2\sfr_r834c.h" 150 150 1268 455 0 6 
+"C:\WorkSpace\mr2\MiconRacer2\MiconRacer2.c" -8 -30 780 784 1 0 
+"C:\WorkSpace\mr2\MiconRacer2\mr2_int.c" 50 50 1268 455 0 1 
+"C:\WorkSpace\mr2\MiconRacer2\mr2_lib.c" 0 0 1316 668 0 2 
+"C:\WorkSpace\mr2\MiconRacer2\mr2_lib.h" 100 100 1268 455 0 3 
+"C:\WorkSpace\mr2\MiconRacer2\ncrt0.a30" 0 0 1316 638 0 5 
+"C:\WorkSpace\mr2\MiconRacer2\sfr_r834c.h" 150 150 1268 455 0 4 
 [LOADED_PROJECTS]
 "MiconRacer2" 
 [END]
