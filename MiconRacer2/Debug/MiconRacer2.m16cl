@@ -1,3 +1,4 @@
+-entry=_main
 -noprelink
 -nomessage
 -list="C:\WorkSpace\mr2\MiconRacer2\Debug\MiconRacer2.map"

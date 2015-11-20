@@ -18,10 +18,62 @@
 #pragma CREG	_flg_	flg
 unsigned int	_flg_;
 
+#define BEEP(x)		mr2_beep(x)
+//#define BEEP(x)		do{}while(0)
+
 	
 //------------------------------------------------------------------------------
 // メインプログラム
 //------------------------------------------------------------------------------
+#define	SCALING		(10)
+long  coeff_fixed[3] = { 10240, 0, 15360};	
+float coeff_float[3] = { 0.1, 1.0, 0.0001 };	
+float dt = 0.001;
+int pos_log[POS_MAX];
+
+int pid_fixed( int dist, int dist_p )
+{
+
+    int diff;
+    static int intg;
+    long p, i, d;
+    int v, m;
+
+    diff = dist-dist_p;
+    intg = 0;
+
+    p = (coeff_fixed[0]*dist)>>SCALING;
+	i = (coeff_fixed[1]*intg)>>SCALING;
+    d = (coeff_fixed[2]*diff)>>SCALING;
+
+    v = p + i + d;
+    m = v>>(SCALING-2);
+
+    return( m );
+}
+
+int pid_float( int dist )
+{
+	int a;
+	
+    float dist_p, diff;
+    static float intg = 0;
+    float p, i, d;
+
+	dist_p = (float)pos_log[1];
+    diff   = ((float)dist-dist_p)*dt;
+/*
+	for( a=0; a<POS_MAX; a++ ){
+ 		intg  += ((float)pos_log[a]+(float)pos_log[a+1])/2*dt;
+	}
+*/
+    p = coeff_float[0] * (float)dist;
+	i = coeff_float[1] * intg;
+    d = coeff_float[2] * diff;
+
+    return( (int)( p + i + d ));
+}
+
 
 void run_main( void )
 {
@@ -32,34 +84,15 @@ void run_main( void )
 	int	oop;
 	int	pos;
 
-	int	distance_def[9] = { -32, -21, -13, -5, 0, 5, 13, 21, 32 };
-
-	int len, len_p, diff, intg, dv, r_factor;
-	int coeff[3];	
-	int	vr, vl;
-	int	p_factor, i_factor, d_factor;
-
+#define CENTER	(4)
+	int distance_def[9] = { -1024, -672, -416, -160, 0, 160, 416, 672, 1024 };
+	int vr, vl;
+	int dist, dist_p, dist_sum, dist_op, r_factor;
+	static int dv = 0;
 	
-	// PID param
-	// ここから固定小数
-#define	FIXED_SHIFT		(10)
-
-	int dt = 1;		// 0.001  (1msを仮定)
-	int Tu = 512;	// 0.5
-	int Ku = 3072;
-
-/*
-	coeff[0] = 39321 * Ku;
-	coeff[1] = coeff[0] / (32768 * Tu);
-	coeff[2] = 4915 * Tu * Ku;
-*/
-	coeff[0] = 6144;
-	coeff[1] = 0;
-	coeff[2] = 0;
-	// ここまで固定小数
-	
+	dist=0;
+	dist_p=0;	
 	ooc = 0;
-	len_p = 0;
     while(1){		
 		read_line = mr2_sensor_check();		// ラインセンサーから最新情報を取得
 
@@ -67,92 +100,69 @@ void run_main( void )
 		for( i=POS_MAX-1; i>0; i-- ){
 			pos_log[i] = pos_log[i-1];
 		}
-		
+
 		switch( read_line ){
-			case SENSOR_LR0:	pos =  0; ooc = 0;	break;
-			case SENSOR_L1 :	pos = -1; ooc = 0;	break;
-			case SENSOR_L2 :	pos = -2; ooc = 0;	break;
-			case SENSOR_L3 :	pos = -3; ooc = 0;	break;
-			case SENSOR_R1 :	pos =  1; ooc = 0;	break;
-			case SENSOR_R2 :	pos =  2; ooc = 0;	break;
-			case SENSOR_R3 :	pos =  3; ooc = 0;	break;
+			case SENSOR_LR0:	pos = distance_def[CENTER  ]; ooc = 0;	break;
+			case SENSOR_L1 :	pos = distance_def[CENTER-1]; ooc = 0;	break;
+			case SENSOR_L2 :	pos = distance_def[CENTER-2]; ooc = 0;	break;
+			case SENSOR_L3 :	pos = distance_def[CENTER-3]; ooc = 0;	break;
+			case SENSOR_R1 :	pos = distance_def[CENTER+1]; ooc = 0;	break;
+			case SENSOR_R2 :	pos = distance_def[CENTER+2]; ooc = 0;	break;
+			case SENSOR_R3 :	pos = distance_def[CENTER+3]; ooc = 0;	break;
 			case SENSOR_AW :
 				if( pos_log[1] > 0 ){
-					pos =  4;
+					pos = distance_def[CENTER+4];
 				} else if( pos_log[1] < 0 ){
-					pos = -4;
+					pos = distance_def[CENTER-4];
 				} else {
-					pos =  0;
+					pos = distance_def[CENTER];
 				}
 				ooc++;
 				break;
 			default :
 				pos = 0;
 				ooc++;
-				break;			
+				break;
 		}
 		pos_log[0] = pos;
 		
-		
-#define	DISTANCE(x)		(distance_def[4+pos_log[x]])
-
 		// cource rounding factor		
-		r_factor = (DISTANCE(0)+DISTANCE(1)+DISTANCE(2))/3;
+		r_factor = (pos_log[0]+pos_log[1]+pos_log[2])/3;
 
-		if( DISTANCE(0)==-21){ mr2_beep( Def_C3 ); }
-		if( DISTANCE(0)==-13){ mr2_beep( Def_D3 ); }
-		if( DISTANCE(0)== -5){ mr2_beep( Def_E3 ); }
-		if( DISTANCE(0)==  0){ mr2_beep( Def_F3 ); }
-		if( DISTANCE(0)==  5){ mr2_beep( Def_G3 ); }
-		if( DISTANCE(0)== 13){ mr2_beep( Def_A3 ); }
-		if( DISTANCE(0)== 21){ mr2_beep( Def_B3 ); }
-		
-		
 		// PID control
-		// ここから固定小数
-		len   = (DISTANCE(0)+r_factor)<<FIXED_SHIFT;
-		diff  = len-len_p;
-		intg  = (len+len_p)/2*dt;
-		len_p = len;
-		
-		p_factor = (coeff[0]*len )>>FIXED_SHIFT;
-		i_factor = (coeff[1]*intg)>>FIXED_SHIFT;
-		d_factor = (coeff[2]*diff)>>FIXED_SHIFT;
-		
-		dv = ( p_factor + i_factor + d_factor )>>FIXED_SHIFT;
-		// ここまで固定小数
-/*		
-		     if( dv < 10 ){ mr2_beep( Def_C4 ); }
-		else if( dv < 20 ){ mr2_beep( Def_D3 ); }
-		else if( dv < 30 ){ mr2_beep( Def_E3 ); }
-		else if( dv < 40 ){ mr2_beep( Def_F3 ); }
-		else if( dv < 50 ){ mr2_beep( Def_G3 ); }
-		else if( dv < 60 ){ mr2_beep( Def_A3 ); }
-		else if( dv < 70 ){ mr2_beep( Def_B3 ); }
-		else              { mr2_beep( Def_C4 ); }
-*/
-		vr = 50+dv;
-		vl = 50-dv;
-/*
-		if( dv > 0 ){
-			vr = 100;
-			vl = 100-(2*dv);
-		}else if( dv < 0 ){
-			vr = 100+(2*dv);
-			vl = 100;
-		}else{
-			vr = 100;
-			vl = 100;
+		dist     = pos_log[0] + r_factor;
+		dist_op  = pid_float( dist );
+
+		// output motor		
+		dv = dist_op;
+		oop=0;
+		if( dv > 100 ){ vr = 100; oop=1; BEEP( Def_C4 ); }
+		if( dv <   0 ){ vr =   0; oop=1; BEEP( Def_C3 ); }
+		if( oop == 0 ){ BEEP( 0 ); }
+
+		vr = (100-abs(dv))-dv;
+		vl = (100-abs(dv))+dv;
+
+		if( abs(pos_log[0])>600 ){
+			vr = (int)( (float)vr * 0.8 );
+			vl = (int)( (float)vl * 0.8 );
+		}else if ( abs(pos_log[0]>1000 )){
+			vr = (int)( (float)vr * 0.6 );
+			vl = (int)( (float)vl * 0.6 );
 		}
-*/
+		
+/*
+		vr = (100-abs(dv))+dv;
+		vl = (100-abs(dv))-dv;
 
 		oop=0;
-		if( vr > 100 ){ vr = 100; oop=1; mr2_beep( Def_C4 ); }
-		if( vr <   0 ){ vr =   0; oop=1; mr2_beep( Def_C3 ); }
-		if( vl > 100 ){ vl = 100; oop=1; mr2_beep( Def_C4 ); }		
-		if( vl <   0 ){ vl =   0; oop=1; mr2_beep( Def_C3 ); }
-//		if( oop == 0 ){ mr2_beep( 0 ); }
-		
+		if( vr > 100 ){ vr = 100; oop=1; BEEP( Def_C4 ); }
+		if( vr <   0 ){ vr =   0; oop=1; BEEP( Def_C3 ); }
+		if( vl > 100 ){ vl = 100; oop=1; BEEP( Def_C4 ); }		
+		if( vl <   0 ){ vl =   0; oop=1; BEEP( Def_C3 ); }
+		if( oop == 0 ){ BEEP( 0 ); }
+*/
+
 		if( ooc>300 ){
 			vr = 0;
 			vl = 0;
@@ -165,7 +175,6 @@ void run_main( void )
 	return;
 }
 
-
 void main(void)
 {
 	DI();
@@ -175,7 +184,7 @@ void main(void)
 	mr2_peri_init();
 	EI();
 
-	while( mr2_pushsw() == 0 );	// スタートボタン押下待ち
+	//while( mr2_pushsw() == 0 );	// スタートボタン押下待ち
 
 	run_main();
 }

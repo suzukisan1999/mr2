@@ -11,8 +11,10 @@
 [CONFIGURATIONS]
 "Debug" "C:\WorkSpace\mr2\MiconRacer2\Debug" 
 "Debug_M16C_R8C_FoUSB_UART" "C:\WorkSpace\mr2\MiconRacer2\Debug_M16C_R8C_FoUSB_UART" 
+"R8CWriter" "C:\WorkSpace\mr2\MiconRacer2\R8CWriter" 
 "Release" "C:\WorkSpace\mr2\MiconRacer2\Release" 
 [BUILD_PHASES]
+"R8C Writer" 0 
 "Renesas M16C Assembler" 1 
 "Renesas M16C C/C++ Compiler" 1 
 "Renesas M16C C/C++ Library Generator" 1 
@@ -101,8 +103,10 @@
 "Renesas OptLinker" 
 [UTILITY_PHASE]
 [CUSTOM_PHASES]
+"R8C Writer" "C:\block_commander\r8c_writer.exe" "$(CONFIGDIR)" 0 0 1 
 [CUSTOM_PHASE_INPUT_GROUP]
 [CUSTOM_PHASE_OUTPUT_SYNTAX]
+[ENVIRONMENT_R8C Writer]
 [BUILD_ORDER]
 "Renesas M16C C/C++ Library Generator" 1 
 "Renesas M16C C/C++ Compiler" 1 
@@ -110,6 +114,7 @@
 "Renesas OptLinker" 1 
 "Renesas M16C ConfiguratorR8C" 0 
 "Renesas M16C Configurator" 0 
+"R8C Writer" 1 
 [BUILD_PHASE_DETAILS]
 "Renesas M16C Assembler" "Assembly source file" 1 
 "Renesas M16C C/C++ Compiler" "C source file|C++ source file" 1 
@@ -149,6 +154,8 @@
 "SessionM16C_R8C_FoUSB_UART" "C:\WorkSpace\mr2\MiconRacer2\SessionM16C_R8C_FoUSB_UART.hsf" 0 
 [GENERAL_DATA_SESSION_DefaultSession]
 [GENERAL_DATA_SESSION_SessionM16C_R8C_FoUSB_UART]
+[OPTIONS_Debug_R8C Writer]
+"Single Shot" "026997bbb6121d10" 0 
 [OPTIONS_Debug_Renesas M16C Assembler]
 "Assembly source file" "09b624446ee11d10" 4 
 "C:\WorkSpace\mr2\MiconRacer2\ncrt0.a30" "09b624446ee11d10" 4 
@@ -159,13 +166,13 @@
 "C:\WorkSpace\mr2\MiconRacer2\mr2_int.c" "0dd46eb6cff11d10" 2 
 "C:\WorkSpace\mr2\MiconRacer2\mr2_lib.c" "0dd46eb6cff11d10" 2 
 [OPTIONS_Debug_Renesas M16C C/C++ Library Generator]
-"Single Shot" "0dd46eb6cff11d10" 1 
+"Single Shot" "0fc6c92d76121d10" 1 
 [OPTIONS_Debug_Renesas M16C Configurator]
 "Single Shot" "0f692ad7a2f11d10" 6 
 [OPTIONS_Debug_Renesas M16C ConfiguratorR8C]
 "Single Shot" "0f692ad7a2f11d10" 6 
 [OPTIONS_Debug_Renesas OptLinker]
-"Single Shot" "0e5fea4560021d10" 5 
+"Single Shot" "0ce2ef6176121d10" 5 
 [OPTIONS_Debug]
 "" 0 
 "[V|VERSION|1] [B|COMMAND|1] [S|SPEC|UITRON4] " 6 
@@ -176,8 +183,10 @@
 "[V|VERSION|1] [S|LIST|LM] [B|INSPECTOR|1] [S|OUTPUTPATH|^"$(CONFIGDIR)\$(FILELEAF).obj^"] [B|DISABLES_MESSAGE|1] [S|CPU|R8C] " 4 
 "[V|VERSION|1] [S|MODE|BUILD] [S|EXISTOUTPUTPATH|^"$(CONFIGDIR)\$(PROJECTNAME).lib^"] [B|NOFLOAT|1] [S|OUTPUTPATH|^"$(CONFIGDIR)\$(PROJECTNAME).lib^"] [S|OPTIMIZE|3] [S|OPTIMIZERS|OR] [S|CPU|R8C] [B|FDOUBLE_32|1]
 " 1 
-"[V|VERSION|6] [S|PRELINK|SKIP] [S|FORM|STYPE] [S|BYTE_COUNT_VALUE|FF] [B|DEBUG|1] [S|CRC|NONE|00000000] [B|LIST|1] [S|LIST|^"$(CONFIGDIR)\$(PROJECTNAME).map^"] [S|SHOW|METHODCUSTOM|] [S|OUTPUT|^"$(CONFIGDIR)\$(PROJECTNAME).mot^"] [I|SPACE|^"FF^"] [B|OPTIMIZE|0] [S|START|data_SE,bss_SE,data_SO,bss_SO,data_NE,bss_NE,data_NO,bss_NO,stack,istack,heap_NE(0500)|interrupt,rom_NE,rom_NO,data_SEI,data_SOI,data_NEI,data_NOI,switch_table,C$VTBL,program(0C000)|vector(0FED8)] [B|STACK|1] [B|TOTAL_SIZE|1] [S|OTHER|^"-change_message=information=1100,1322,1410 ^"]
+"[V|VERSION|6] [B|ENTRY|1] [S|ENTRY|^"_main^"] [S|PRELINK|SKIP] [S|FORM|STYPE] [S|BYTE_COUNT_VALUE|FF] [B|DEBUG|1] [S|CRC|NONE|00000000] [B|LIST|1] [S|LIST|^"$(CONFIGDIR)\$(PROJECTNAME).map^"] [S|SHOW|METHODCUSTOM|] [S|OUTPUT|^"$(CONFIGDIR)\$(PROJECTNAME).mot^"] [I|SPACE|^"FF^"] [B|OPTIMIZE|0] [S|START|data_SE,bss_SE,data_SO,bss_SO,data_NE,bss_NE,data_NO,bss_NO,stack,istack,heap_NE(0500)|interrupt,rom_NE,rom_NO,data_SEI,data_SOI,data_NEI,data_NOI,switch_table,C$VTBL,program(0C000)|vector(0FED8)] [B|STACK|1] [B|TOTAL_SIZE|1] [S|OTHER|^"-change_message=information=1100,1322,1410 ^"]
 " 5 
+[DEPENDENCIES_Debug_R8C Writer]
+[OUTPUT_FILES_Debug_R8C Writer]
 [EXCLUDED_FILES_Debug]
 [LINKAGE_ORDER_Debug]
 "c:\workspace\mr2\miconracer2\debug\miconracer2.lib" 
@@ -186,6 +195,8 @@
 "c:\workspace\mr2\miconracer2\debug\mr2_lib.obj" 
 "c:\workspace\mr2\miconracer2\debug\ncrt0.obj" 
 [GENERAL_DATA_CONFIGURATION_Debug]
+[OPTIONS_Debug_M16C_R8C_FoUSB_UART_R8C Writer]
+"Single Shot" "026997bbb6121d10" 0 
 [OPTIONS_Debug_M16C_R8C_FoUSB_UART_Renesas M16C Assembler]
 "Assembly source file" "09b624446ee11d10" 4 
 "C:\WorkSpace\mr2\MiconRacer2\ncrt0.a30" "09b624446ee11d10" 4 
@@ -212,6 +223,8 @@
 "[V|VERSION|1] [S|OUTPUTPATH|^"$(CONFIGDIR)\$(PROJECTNAME).lib^"] [S|CPU|R8C] [B|NOFLOAT|1] [S|MODE|BUILD/CHANGED]" 1 
 "[V|VERSION|1] [S|OUTPUT|OBJECTCODE] [S|OUTPUTPATH|^"$(CONFIGDIR)\$(FILELEAF).obj^"] [B|INSPECTOR|1] [B|SILENT|1] [S|CPU|R8C] " 2 
 "[V|VERSION|6] [B|OPTIMIZE|0] [S|OUTPUT|^"$(CONFIGDIR)\$(PROJECTNAME).mot^"] [B|LIST|1] [S|LIST|^"$(CONFIGDIR)\$(PROJECTNAME).map^"] [S|OTHER|^"-change_message=information=1100,1322,1410^"] [S|FORM|STYPE] [B|TOTAL_SIZE|1] [B|STACK|1] [S|START|data_SE,bss_SE,data_SO,bss_SO,data_NE,bss_NE,data_NO,bss_NO,stack,istack,heap_NE(400)|interrupt,rom_NE,rom_NO,data_SEI,data_SOI,data_NEI,data_NOI,switch_table,C$VTBL,program(c000)|vector(fed8)]" 5 
+[DEPENDENCIES_Debug_M16C_R8C_FoUSB_UART_R8C Writer]
+[OUTPUT_FILES_Debug_M16C_R8C_FoUSB_UART_R8C Writer]
 [EXCLUDED_FILES_Debug_M16C_R8C_FoUSB_UART]
 [LINKAGE_ORDER_Debug_M16C_R8C_FoUSB_UART]
 "c:\workspace\mr2\miconracer2\debug_m16c_r8c_fousb_uart\miconracer2.lib" 
@@ -220,6 +233,50 @@
 "c:\workspace\mr2\miconracer2\debug_m16c_r8c_fousb_uart\mr2_lib.obj" 
 "c:\workspace\mr2\miconracer2\debug_m16c_r8c_fousb_uart\ncrt0.obj" 
 [GENERAL_DATA_CONFIGURATION_Debug_M16C_R8C_FoUSB_UART]
+[OPTIONS_R8CWriter_R8C Writer]
+"Single Shot" "04d3ec52d6121d10" 7 
+[OPTIONS_R8CWriter_Renesas M16C Assembler]
+"Assembly source file" "09b624446ee11d10" 4 
+"C:\WorkSpace\mr2\MiconRacer2\ncrt0.a30" "09b624446ee11d10" 4 
+[OPTIONS_R8CWriter_Renesas M16C C/C++ Compiler]
+"C source file" "0dd46eb6cff11d10" 2 
+"C++ source file" "0dd46eb6cff11d10" 3 
+"C:\WorkSpace\mr2\MiconRacer2\MiconRacer2.c" "0dd46eb6cff11d10" 2 
+"C:\WorkSpace\mr2\MiconRacer2\mr2_int.c" "0dd46eb6cff11d10" 2 
+"C:\WorkSpace\mr2\MiconRacer2\mr2_lib.c" "0dd46eb6cff11d10" 2 
+[OPTIONS_R8CWriter_Renesas M16C C/C++ Library Generator]
+"Single Shot" "0fc6c92d76121d10" 1 
+[OPTIONS_R8CWriter_Renesas M16C Configurator]
+"Single Shot" "0f692ad7a2f11d10" 6 
+[OPTIONS_R8CWriter_Renesas M16C ConfiguratorR8C]
+"Single Shot" "0f692ad7a2f11d10" 6 
+[OPTIONS_R8CWriter_Renesas OptLinker]
+"Single Shot" "0ce2ef6176121d10" 5 
+[OPTIONS_R8CWriter]
+"" 0 
+"/f=^"$(CONFIGDIR)\$(WORKSPNAME).mot^" /n=^"USB Serial Port^" /s=1 /e=1" 7 
+"[V|VERSION|1] [B|COMMAND|1] [S|SPEC|UITRON4] " 6 
+"[V|VERSION|1] [S|LANG|CPP] [S|OUTPUT|OBJECTCODE] [B|INSPECTOR|1] [S|OUTPUTPATH|^"$(CONFIGDIR)\$(FILELEAF).obj^"] [S|MISRA|ALL] [B|SILENT|1] [S|CPU|R8C] [B|FDOUBLE_32|1]
+" 3 
+"[V|VERSION|1] [S|LANG|C] [S|OUTPUT|OBJECTCODE] [B|INSPECTOR|1] [S|OUTPUTPATH|^"$(CONFIGDIR)\$(FILELEAF).obj^"] [S|MISRA|ALL] [B|SILENT|1] [S|CPU|R8C] [B|FDOUBLE_32|1]
+" 2 
+"[V|VERSION|1] [S|LIST|LM] [B|INSPECTOR|1] [S|OUTPUTPATH|^"$(CONFIGDIR)\$(FILELEAF).obj^"] [B|DISABLES_MESSAGE|1] [S|CPU|R8C] " 4 
+"[V|VERSION|1] [S|MODE|BUILD] [S|EXISTOUTPUTPATH|^"$(CONFIGDIR)\$(PROJECTNAME).lib^"] [B|NOFLOAT|1] [S|OUTPUTPATH|^"$(CONFIGDIR)\$(PROJECTNAME).lib^"] [S|OPTIMIZE|3] [S|OPTIMIZERS|OR] [S|CPU|R8C] [B|FDOUBLE_32|1]
+" 1 
+"[V|VERSION|6] [B|ENTRY|1] [S|ENTRY|^"_main^"] [S|PRELINK|SKIP] [S|FORM|STYPE] [S|BYTE_COUNT_VALUE|FF] [B|DEBUG|1] [S|CRC|NONE|00000000] [B|LIST|1] [S|LIST|^"$(CONFIGDIR)\$(PROJECTNAME).map^"] [S|SHOW|METHODCUSTOM|] [S|OUTPUT|^"$(CONFIGDIR)\$(PROJECTNAME).mot^"] [I|SPACE|^"FF^"] [B|OPTIMIZE|0] [S|START|data_SE,bss_SE,data_SO,bss_SO,data_NE,bss_NE,data_NO,bss_NO,stack,istack,heap_NE(0500)|interrupt,rom_NE,rom_NO,data_SEI,data_SOI,data_NEI,data_NOI,switch_table,C$VTBL,program(0C000)|vector(0FED8)] [B|STACK|1] [B|TOTAL_SIZE|1] [S|OTHER|^"-change_message=information=1100,1322,1410 ^"]
+" 5 
+[DEPENDENCIES_R8CWriter_R8C Writer]
+[OUTPUT_FILES_R8CWriter_R8C Writer]
+[EXCLUDED_FILES_R8CWriter]
+[LINKAGE_ORDER_R8CWriter]
+"C:\WorkSpace\mr2\MiconRacer2\R8CWriter\miconracer2.lib" 
+"C:\WorkSpace\mr2\MiconRacer2\R8CWriter\miconracer2.obj" 
+"C:\WorkSpace\mr2\MiconRacer2\R8CWriter\mr2_int.obj" 
+"C:\WorkSpace\mr2\MiconRacer2\R8CWriter\mr2_lib.obj" 
+"C:\WorkSpace\mr2\MiconRacer2\R8CWriter\ncrt0.obj" 
+[GENERAL_DATA_CONFIGURATION_R8CWriter]
+[OPTIONS_Release_R8C Writer]
+"Single Shot" "026997bbb6121d10" 0 
 [OPTIONS_Release_Renesas M16C Assembler]
 "Assembly source file" "09b624446ee11d10" 4 
 "C:\WorkSpace\mr2\MiconRacer2\ncrt0.a30" "09b624446ee11d10" 4 
@@ -246,6 +303,8 @@
 "[V|VERSION|1] [S|OUTPUTPATH|^"$(CONFIGDIR)\$(PROJECTNAME).lib^"] [S|CPU|R8C] [B|NOFLOAT|1] [S|MODE|BUILD/CHANGED]" 1 
 "[V|VERSION|1] [S|OUTPUT|OBJECTCODE] [S|OUTPUTPATH|^"$(CONFIGDIR)\$(FILELEAF).obj^"] [B|INSPECTOR|1] [B|SILENT|1] [S|CPU|R8C] " 2 
 "[V|VERSION|6] [B|OPTIMIZE|0] [S|OUTPUT|^"$(CONFIGDIR)\$(PROJECTNAME).mot^"] [B|LIST|1] [S|LIST|^"$(CONFIGDIR)\$(PROJECTNAME).map^"] [S|OTHER|^"-change_message=information=1100,1322,1410^"] [S|FORM|STYPE] [B|TOTAL_SIZE|1] [B|STACK|1] [S|START|data_SE,bss_SE,data_SO,bss_SO,data_NE,bss_NE,data_NO,bss_NO,stack,istack,heap_NE(400)|interrupt,rom_NE,rom_NO,data_SEI,data_SOI,data_NEI,data_NOI,switch_table,C$VTBL,program(c000)|vector(fed8)]" 5 
+[DEPENDENCIES_Release_R8C Writer]
+[OUTPUT_FILES_Release_R8C Writer]
 [EXCLUDED_FILES_Release]
 [LINKAGE_ORDER_Release]
 "C:\WorkSpace\mr2\MiconRacer2\Release\ncrt0.r30" 
@@ -261,6 +320,12 @@
 "MEMORY_MAPPING_OPTIONS" "" 
 [GENERAL_DATA_CONFIGURATION_SESSION_Debug_M16C_R8C_FoUSB_UART_SessionM16C_R8C_FoUSB_UART]
 [SESSION_DATA_CONFIGURATION_SESSION_Debug_M16C_R8C_FoUSB_UART_SessionM16C_R8C_FoUSB_UART]
+"MEMORY_MAPPING_OPTIONS" "Unknown Options" 
+[GENERAL_DATA_CONFIGURATION_SESSION_R8CWriter_DefaultSession]
+[SESSION_DATA_CONFIGURATION_SESSION_R8CWriter_DefaultSession]
+"MEMORY_MAPPING_OPTIONS" "" 
+[GENERAL_DATA_CONFIGURATION_SESSION_R8CWriter_SessionM16C_R8C_FoUSB_UART]
+[SESSION_DATA_CONFIGURATION_SESSION_R8CWriter_SessionM16C_R8C_FoUSB_UART]
 "MEMORY_MAPPING_OPTIONS" "Unknown Options" 
 [GENERAL_DATA_CONFIGURATION_SESSION_Release_DefaultSession]
 [SESSION_DATA_CONFIGURATION_SESSION_Release_DefaultSession]

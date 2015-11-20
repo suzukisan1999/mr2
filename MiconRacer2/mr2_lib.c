@@ -9,12 +9,6 @@
 unsigned long	mr2_timer_count = 0;       // timer関数用
 volatile char	mr2_line_data = 0;	// 最新ラインパターン
 
-// position log
-unsigned char	mr2_pos_log[POS_MAX] ={};
-	
-int	mr2_pos_ptr = (POS_MAX-1);
-
-
 //------------------------------------------------------------------------------
 // センサー状態検出
 // 引数         なし
@@ -117,7 +111,8 @@ void mr2_peri_init( void )
                                         // P0_5～P0_7:LED
         prc2 = 0;                       // pd0レジスタへの書き込み禁止
 
-        pd1 = 0xdf;                     // P1_0～P1_3:LED
+        pd1 = pd1 | 0xf;                     // P1_0～P1_3:LED
+//        pd1 = 0xdf;                     // P1_0～P1_3:LED
                                         // P1_4:TXD0
                                         // P1_5:RXD0
 										// P1_7:Servo 1:Active
@@ -223,37 +218,5 @@ unsigned char mr2_pushsw( void )
         data1 &= 0x01;
 
         return( data1 );
-}
-
-
-void	mr2_pos_push( unsigned char data )
-{
-	DI();
-	mr2_pos_log[mr2_pos_ptr--] = data;
-	if( mr2_pos_ptr<0 ){
-		mr2_pos_ptr=POS_MAX-1;
-	}
-	EI();
-	return;
-}
-
-// 0: 最新
-// 9: 一番古い
-unsigned char mr2_pos( unsigned char pos )
-{
-	pos = (mr2_pos_ptr+1+pos)%POS_MAX;
-	return( mr2_pos_log[pos] );
-}
-
-void mr2_pos_all( unsigned char *pos )
-{
-	int i;
-	
-	pos += POS_MAX-1;
-	
-	for( i=0; i<POS_MAX; i++ ){
-		*pos-- = mr2_pos_log[ (mr2_pos_ptr+1+i)%POS_MAX ];
-	}
-	return;
 }
 

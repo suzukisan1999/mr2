@@ -40,7 +40,7 @@
 
 #define CENTER_LINE     BLACK						// 中央ラインの色の設定
 
-#define MOTOR_LIMIT		(80)						// モータ最大出力 : 60%
+#define MOTOR_LIMIT		(40)						// モータ最大出力 : 60%
 #define OPTION_L        (MOTOR_LIMIT)				// 最大回転数設定
 #define OPTION_R        (MOTOR_LIMIT)
 
@@ -64,9 +64,8 @@
 extern	unsigned long           mr2_timer_count;	// タイマーカウンタ
 extern	volatile unsigned char	mr2_line_data;		// 最新ラインパターン
 
-#define	POS_MAX		(10)
-//extern	volatile unsigned char	mr2_pos_log[POS_MAX];
-//extern	volatile unsigned char	mr2_pos_ptr;
+#define	POS_MAX		(5)
+extern int pos_log[POS_MAX];
 
 
 //------------------------------------------------------------------------------
@@ -81,9 +80,5 @@ extern	void mr2_motor( int, int );
 extern	void mr2_timer( unsigned long );
 extern	void mr2_beep( int );
 extern	unsigned char mr2_pushsw( void );
-
-extern	void	mr2_pos_push( unsigned char );
-extern	unsigned char mr2_pos( unsigned char );
-extern	void mr2_pos_all( unsigned char * );
 
 #endif	// ifndef __MR2_LIB__

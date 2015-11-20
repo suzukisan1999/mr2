@@ -1,8 +1,9 @@
-Optimizing Linkage Editor (V.10.01.00.000)        16-Nov-2015 00:42:59
+Optimizing Linkage Editor (V.10.01.00.000)        20-Nov-2015 19:13:28
 
 *** Options ***
 
 -subcommand=C:\WorkSpace\mr2\MiconRacer2\Debug\MiconRacer2.m16cl
+-entry=_main
 -noprelink
 -nomessage
 -list="C:\WorkSpace\mr2\MiconRacer2\Debug\MiconRacer2.map"
@@ -35,15 +36,15 @@ data_SO
 bss_SO
                                   00000500  00000500         0   1
 data_NE
-                                  00000500  00000515        16   2
+                                  00000500  0000052b        2c   2
 bss_NE
-                                  00000516  00000519         4   2
+                                  0000052c  0000053b        10   2
 data_NO
-                                  0000051a  0000051a         1   1
+                                  0000053c  0000053c         1   1
 bss_NO
-                                  0000051b  0000051b         0   1
+                                  0000053d  0000053d         0   1
 istack
-                                  0000051c  0000059b        80   2
+                                  0000053e  000005bd        80   2
 interrupt
                                   0000c000  0000c08c        8d   2
 data_SEI
@@ -51,11 +52,11 @@ data_SEI
 data_SOI
                                   0000c08d  0000c08d         0   1
 data_NEI
-                                  0000c08e  0000c0a3        16   2
+                                  0000c08e  0000c0b9        2c   2
 data_NOI
-                                  0000c0a4  0000c0a4         1   1
+                                  0000c0ba  0000c0ba         1   1
 program
-                                  0000c0a6  0000c7be       719   2
+                                  0000c0bc  0000cd3f       c84   2
 vector
                                   0000fed8  0000ffd7       100   2
 fvector
