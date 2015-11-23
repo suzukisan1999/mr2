@@ -1,6 +1,6 @@
-#ifndef	__MR2_LIB__
+#ifndef	__LIB__
 
-#define __MR2_LIB__
+#define __LIB__
 
 #include "sfr_r834c.h"
 
@@ -19,14 +19,16 @@
 #define Def_500Hz       4999            // 500Hz:(1/500)/(1/(20000000/8))-1
 #define Def_1000Hz      2499            // 1000Hz:(1/1000)/(1/(20000000/8))-1
 
-#define Def_C3          19083           // ド:(1/131)/(1/(20000000/8))-1
-#define Def_D3          17006           // レ:(1/147)/(1/(20000000/8))-1
-#define Def_E3          15151           // ミ:(1/165)/(1/(20000000/8))-1
-#define Def_F3          14285           // ファ:(1/175)/(1/(20000000/8))-1
-#define Def_G3          12754           // ソ:(1/196)/(1/(20000000/8))-1
-#define Def_A3          11362           // ラ:(1/220)/(1/(20000000/8))-1
-#define Def_B3          10120           // シ:(1/247)/(1/(20000000/8))-1
-#define Def_C4          9541            // ド:(1/262)/(1/(20000000/8))-1
+#define Def_C3          (19083)           // ド:(1/131)/(1/(20000000/8))-1
+#define Def_D3          (17006)           // レ:(1/147)/(1/(20000000/8))-1
+#define Def_E3          (15151)           // ミ:(1/165)/(1/(20000000/8))-1
+#define Def_F3          (14285)           // ファ:(1/175)/(1/(20000000/8))-1
+#define Def_G3          (12754)           // ソ:(1/196)/(1/(20000000/8))-1
+#define Def_A3          (11362)           // ラ:(1/220)/(1/(20000000/8))-1
+#define Def_B3          (10120)           // シ:(1/247)/(1/(20000000/8))-1
+#define Def_C4          (9541)            // ド:(1/262)/(1/(20000000/8))-1
+#define Def_C4          (9541)            // ド:(1/262)/(1/(20000000/8))-1
+#define OFF				(0)
 
 #define DI()            asm("FCLR I")   // 割り込み禁止
 #define EI()            asm("FSET I")   // 割り込み許可
@@ -40,20 +42,25 @@
 
 #define CENTER_LINE     BLACK						// 中央ラインの色の設定
 
-#define MOTOR_LIMIT		(40)						// モータ最大出力 : 60%
+#define MOTOR_LIMIT		(100)						// モータ最大出力 : 60%
 #define OPTION_L        (MOTOR_LIMIT)				// 最大回転数設定
 #define OPTION_R        (MOTOR_LIMIT)
 
 // LEDセンサー定義  ○：消灯   ●：点灯
-#define SENSOR_LR0		(       0x04 | 0x02       )	// 中央   : ○●●○
-#define SENSOR_L1		(       0x04              )	// 左(小) : ○●○○
-#define SENSOR_R1		(              0x02       )	// 右(小) : ○○●○
-#define SENSOR_L2		(0x08 | 0x04              )	// 左(中) : ●●○○
-#define SENSOR_R2		(              0x02 | 0x01)	// 右(中) : ○○●●
-#define SENSOR_L3		(0x08                     )	// 左(大) : ●○○○
-#define SENSOR_R3		(                     0x01)	// 右(大) : ○○○●
 #define SENSOR_AB		(0x08 | 0x04 | 0x02 | 0x01)	// 全点灯 : ●●●● (AB:All Black)
 #define SENSOR_AW		(0x00)						// 全消灯 : ○○○○ (AW:All White)
+#define SENSOR_LR0		(       0x04 | 0x02       )	// 中央   : ○●●○
+
+#define SENSOR_L1		(       0x04              )	// 左(小) : ○●○○
+#define SENSOR_L2		(0x08 | 0x04              )	// 左(中) : ●●○○
+#define SENSOR_L3		(0x08                     )	// 左(大) : ●○○○
+#define SENSOR_LC		(0x08 | 0x04 | 0x02       ) // 左曲   : ●●●○
+
+#define SENSOR_R1		(              0x02       )	// 右(小) : ○○●○
+#define SENSOR_R2		(              0x02 | 0x01)	// 右(中) : ○○●●
+#define SENSOR_R3		(                     0x01)	// 右(大) : ○○○●
+#define SENSOR_RC		(       0x04 | 0x02 | 0x01)	// 右曲   : ○●●●
+
 
 #define	OOC_MAX			(500)
 
@@ -61,24 +68,20 @@
 // グローバル変数の宣言
 //------------------------------------------------------------------------------
 
-extern	unsigned long           mr2_timer_count;	// タイマーカウンタ
-extern	volatile unsigned char	mr2_line_data;		// 最新ラインパターン
-
-#define	POS_MAX		(5)
-extern int pos_log[POS_MAX];
-
+extern	unsigned long           timer_count;	// タイマーカウンタ
+extern	volatile unsigned char	line_data;		// 最新ラインパターン
 
 //------------------------------------------------------------------------------
 // プロトタイプ宣言
 //------------------------------------------------------------------------------
 
-extern	void mr2_clock_init( void );
-extern	void mr2_peri_init( void );
-extern	unsigned char mr2_sensor( void );
-extern	unsigned char mr2_sensor_check( void );
-extern	void mr2_motor( int, int );
-extern	void mr2_timer( unsigned long );
-extern	void mr2_beep( int );
-extern	unsigned char mr2_pushsw( void );
+extern	void clock_init( void );
+extern	void peri_init( void );
+extern	unsigned char sensor( void );
+extern	unsigned char sensor_check( void );
+extern	void motor( int, int );
+extern	void timer( unsigned long );
+extern	void beep( int );
+extern	unsigned char pushsw( void );
 
-#endif	// ifndef __MR2_LIB__
+#endif	// ifndef __LIB__

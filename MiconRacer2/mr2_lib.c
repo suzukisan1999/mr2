@@ -6,15 +6,15 @@
 //------------------------------------------------------------------------------
 
 
-unsigned long	mr2_timer_count = 0;       // timer関数用
-volatile char	mr2_line_data = 0;	// 最新ラインパターン
+unsigned long	timer_count = 0;       // timer関数用
+volatile char	line_data = 0;	// 最新ラインパターン
 
 //------------------------------------------------------------------------------
 // センサー状態検出
 // 引数         なし
 // 戻り値       センサ値 + 情報更新フラグ
 //------------------------------------------------------------------------------
-unsigned char mr2_sensor( void )
+unsigned char sensor( void )
 {
         volatile unsigned char  data1;
 #if CENTER_LINE
@@ -34,11 +34,11 @@ unsigned char mr2_sensor( void )
 // 引数         なし
 // 戻り値       センサ値 (情報更新フラグはクリアされている)
 //------------------------------------------------------------------------------
-unsigned char mr2_sensor_check( void ){
+unsigned char sensor_check( void ){
 	unsigned char data;
-	while( (mr2_line_data & 0x80) == 0x00 );	// update flag check
-	mr2_line_data &= 0x7f;						// update flag clear
-	data = mr2_line_data;
+	while( (line_data & 0x80) == 0x00 );	// update flag check
+	line_data &= 0x7f;						// update flag clear
+	data = line_data;
 	return data;
 }
 
@@ -48,7 +48,7 @@ unsigned char mr2_sensor_check( void ){
 //              0で停止、100で正転100%、-100で逆転100%
 // 戻り値       なし
 //------------------------------------------------------------------------------
-void mr2_motor( int data1, int data2 )
+void motor( int data1, int data2 )
 {
         volatile int    motor_r;
         volatile int    motor_l;
@@ -80,7 +80,7 @@ void mr2_motor( int data1, int data2 )
 //------------------------------------------------------------------------------
 // R8C/34Cの内蔵周辺機能の初期化
 //------------------------------------------------------------------------------
-void mr2_clock_init( void )
+void clock_init( void )
 {
         volatile unsigned char i = 0;
 
@@ -101,7 +101,7 @@ void mr2_clock_init( void )
         prc0 = 0;
 		
 }
-void mr2_peri_init( void )
+void peri_init( void )
 {
 		
         // I/Oポートの入出力設定
@@ -188,10 +188,10 @@ void mr2_peri_init( void )
 // 引数         タイマ値 1=1ms
 // 戻り値       なし
 //------------------------------------------------------------------------------
-void mr2_timer( unsigned long data1 )
+void timer( unsigned long data1 )
 {
-        mr2_timer_count = 0;
-        while( mr2_timer_count < data1 );
+        timer_count = 0;
+        while( timer_count < data1 );
 }
 
 //------------------------------------------------------------------------------
@@ -199,7 +199,7 @@ void mr2_timer( unsigned long data1 )
 // 引数         (1/音の周波数)/(1/(クロック周波数/8))-1
 ;// 戻り値       なし
 //------------------------------------------------------------------------------
-void mr2_beep( int data1 )
+void beep( int data1 )
 {
         trcgra = data1;                 // 周期の設定
         trcgrc = data1 / 2;             // デューティ50%のため周期の半分の値
@@ -210,7 +210,7 @@ void mr2_beep( int data1 )
 // 引数         なし
 // 戻り値       スイッチが押されていない場合:0、押された場合:1
 //------------------------------------------------------------------------------
-unsigned char mr2_pushsw( void )
+unsigned char pushsw( void )
 {
         unsigned char data1;
 

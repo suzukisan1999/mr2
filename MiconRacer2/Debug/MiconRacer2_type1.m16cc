@@ -1,0 +1,10 @@
+-lang=c
+-D_UART_
+-c
+-finfo
+-dir "C:\WorkSpace\mr2\MiconRacer2\Debug"
+-O1
+-silent
+-R8C
+-fD32
+"C:\WorkSpace\mr2\MiconRacer2\MiconRacer2_type1.c"

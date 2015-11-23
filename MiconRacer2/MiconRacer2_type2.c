@@ -18,6 +18,14 @@
 #pragma CREG	_flg_	flg
 unsigned int	_flg_;
 
+#define	POS_MAX		(30)
+int pos_log[POS_MAX] = {};
+
+#define DAKOU_MAX	(15)
+int	dakou_log[DAKOU_MAX] = {};
+int dakou_ptr = 0;
+#define DAKOU_PUSH(x)	do{ dakou_log[dakou_ptr++] = x; dakou_ptr %= DAKOU_MAX; }while(0)
+
 #define BEEP_MAX	(100)
 #define BEEP(x)		beep(x)
 //#define BEEP(x)		do{}while(0)
@@ -25,7 +33,7 @@ unsigned int	_flg_;
 
 #define	BEEP_LOGERR		OFF
 #define	BEEP_TOBI		OFF
-#define	BEEP_DAKOU		OFF
+#define	BEEP_DAKOU		Def_C4
 #define	BEEP_POWLOW		OFF
 #define BEEP_POWMAX		OFF
 
@@ -36,16 +44,55 @@ unsigned int	_flg_;
 #define	POWER_HALF (int)((float)500 * (50.0F/(float)MOTOR_LIMIT))
 #define	POWER_SLOW (int)((float)750 * (50.0F/(float)MOTOR_LIMIT))
 
-	
+#define SCALING		(20)
+#define myabs(x)	((x) >= 0 ? (x) : -(x))
+
 //------------------------------------------------------------------------------
 // メインプログラム
 //------------------------------------------------------------------------------
-int pos_log[POS_MAX];
+
+long long int Kp = 210;
+long long int Kd = 31457;
+long long int Ki = 5243;
+
+long long int p, i, d;
+long long int fx_dist, fx_diff, fx_intg;
+
+float	fKp = 0.0002F;
+float	fKd = 0.03F;
+float	fKi = 0.005F;
+
+int pid_float( int dist, int diff, int intg )
+{
+	int p, i, d;
+
+	p = (int)( fKp * (float)dist * (float)myabs(dist) );
+	d = (int)( fKd * (float)diff );
+	i = (int)( fKi * (float)intg );
+		
+	// output motor		
+	return( p+d+i );
+}
+
+int pid( int dist, int diff, int intg )
+{
+	
+	fx_dist = ((long long int)dist) << SCALING;
+	fx_diff = ((long long int)diff) << SCALING;
+	fx_intg = ((long long int)intg) << SCALING;
+	
+	p = ( Kp * (( fx_dist * myabs(fx_dist)) >> SCALING )) >> SCALING;
+	d = ( Kd * fx_diff ) >> SCALING;
+	i = ( Ki * fx_intg ) >> SCALING;
+	
+	return( (int)((p+i+d)>>SCALING) );
+}
 
 void run_main( void )
 {
 	unsigned char read_line = 0;
 	int i;
+	int cyc_cnt;
 	int	ooc;
 	int	oop;
 	int	pos;
@@ -53,12 +100,10 @@ void run_main( void )
 	int distance_def[9] = { -1024, -672, -416, -160, 0, 160, 416, 672, 1024 };
 	int dv, vr, vl;
 	int dist, diff, intg;
-	int	p_factor, i_factor, d_factor, r_factor;
-	float coeff[3];
-	volatile float tmp1, tmp2, tmp3;
 
 	int tobi, dakou, instab;
-	int side_l, side_r;
+	int pole, side_r, side_l;
+	int	dakou_intg;
 	
 	int beep_count;
 	int error;
@@ -68,6 +113,8 @@ void run_main( void )
 	ooc = 0;
 	beep_count = 0;
 	power = 100;
+	cyc_cnt = 0;
+	dakou_intg = 0;
     while(1){		
 		read_line = sensor_check();		// ラインセンサーから最新情報を取得
 
@@ -111,7 +158,7 @@ void run_main( void )
 		// 安定性の評価
 		
 		// センサ飛び検出
-		tobi = (abs(pos_log[0]-pos_log[1])>1);
+		tobi = (myabs(pos_log[0]-pos_log[1])>1);
 #if BEEP_TOBI > 0
 		if( tobi > 0 ){
 			BEEP( BEEP_TOBI );
@@ -120,20 +167,30 @@ void run_main( void )
 #endif
 		
 		// 蛇行検出
-		side_l = 0;
-		side_r = 0;
-		for (i=0; i<POS_MAX-1; i++ ){
-			if( pos_log[i] < -2 ){
-				side_l = 1;
-			}
-			if( pos_log[i] > 2 ){
-				side_r = 1;
+		if( cyc_cnt == 0 ){
+			DAKOU_PUSH( dakou_intg );
+			dakou_intg = 0;
+
+			dakou = 0;		
+			pole  = 0;
+			for (i=0; i<DAKOU_MAX-1; i++ ){
+				side_r = ((dakou_log[i]/POS_MAX)<<1) >  3;
+				side_l = ((dakou_log[i]/POS_MAX)<<1) < -3;
+			
+				if( pole == 1 ){
+					if( side_r ){ pole =  1;          }
+					if( side_l ){ pole = -1; dakou++; }
+				}else if ( pole == -1 ){
+					if( side_r ){ pole =  1; dakou++; }
+					if( side_l ){ pole = -1;          }
+				}else{
+					if( side_r ){ pole =  1;          }
+					if( side_l ){ pole = -1;          }
+				}
 			}
 		}
-		dakou = 0;
-		if( (side_l==1) && (side_r==1) ){
-			dakou = 1;
-		}
+		dakou_intg += pos;
+
 #if BEEP_DAKOU > 0
 		if( dakou > 0 ){
 			BEEP( BEEP_DAKOU );
@@ -141,15 +198,6 @@ void run_main( void )
 		}
 #endif
 		
-		//tobi=0;
-		//dakou=0;
-		// 速度制限
-		if( (tobi==0) && (dakou==0) ){
-			instab = 0;
-		}else{
-			instab++;
-		}
-	
 		// 距離での制御
 		dist = DISTANCE(0);
 		
@@ -164,23 +212,13 @@ void run_main( void )
 				((DISTANCE(4)+DISTANCE(5))>>1);
 
 		// PID
-		coeff[0] = 0.0002F;
-		coeff[1] = 0.03F;
-		coeff[2] = 0.005;
-//		coeff[2] = 0;
-
-		p_factor = (int)( coeff[0] * (float)dist * (float)abs(dist) );
-		d_factor = (int)( coeff[1] * (float)diff );
-		i_factor = (int)( coeff[2] * (float)intg );
-		
-		// output motor		
-		dv = p_factor + d_factor + i_factor;
+		dv = pid_float( dist, diff, intg );
+//		dv = pid( dist, diff, intg );
 		SATURATE( dv, 100, -100 );
-		
 
 		// パワーダウン指示
-		power_down = (instab>10) || (abs(intg)>3000);
-		power_up   = (abs(intg)<1500);
+		power_down = (dakou>0) || (myabs(intg)>3000);
+		power_up   = (myabs(intg)<1500);
 		
 		// 出力調整
 		if( power_down ){
@@ -188,7 +226,7 @@ void run_main( void )
 		}else if( power_up ){
 			power += 1;
 		}
-		if( abs(dist) > 700 ){
+		if( myabs(dist) > 700 ){
 			power = SATURATE( power, 1000, POWER_HALF );
 		}else{
 			power = SATURATE( power, 1000, POWER_SLOW );
@@ -233,6 +271,8 @@ void run_main( void )
 		if( beep_count <= 0 ){
 			BEEP( 0 );
 		}
+		
+		cyc_cnt = (cyc_cnt+1) % POS_MAX;
 			
 
 	}	// while(1)
@@ -249,7 +289,7 @@ void main(void)
 	peri_init();
 	EI();
 
-	while( pushsw() == 0 );	// スタートボタン押下待ち
+	//while( pushsw() == 0 );	// スタートボタン押下待ち
 	run_main();
 }
 

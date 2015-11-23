@@ -1,4 +1,4 @@
-Optimizing Linkage Editor (V.10.01.00.000)        20-Nov-2015 19:13:28
+Optimizing Linkage Editor (V.10.01.00.000)        24-Nov-2015 02:32:01
 
 *** Options ***
 
@@ -8,15 +8,16 @@ Optimizing Linkage Editor (V.10.01.00.000)        20-Nov-2015 19:13:28
 -nomessage
 -list="C:\WorkSpace\mr2\MiconRacer2\Debug\MiconRacer2.map"
 -nooptimize
--start=data_SE,bss_SE,data_SO,bss_SO,data_NE,bss_NE,data_NO,bss_NO,stack,istack,heap_NE/0500,interrupt,rom_NE,rom_NO,data_SEI,data_SOI,data_NEI,data_NOI,switch_table,C$VTBL,program/0C000,vector/0FED8
+-start=data_SE,bss_SE,data_SO,bss_SO,data_NE,bss_NE,data_NO,bss_NO,stack,istack,heap_NE/0500,FirmArea_NE/08000,interrupt,rom_NE,rom_NO,data_SEI,data_SOI,data_NEI,data_NOI,switch_table,C$VTBL,program/0C000,vector/0FED8
 -nologo
 -stack
 -total_size
 -library="C:\WorkSpace\mr2\MiconRacer2\Debug\MiconRacer2.lib"
--input="C:\WorkSpace\mr2\MiconRacer2\Debug\MiconRacer2.obj"
 -input="C:\WorkSpace\mr2\MiconRacer2\Debug\mr2_int.obj"
 -input="C:\WorkSpace\mr2\MiconRacer2\Debug\mr2_lib.obj"
 -input="C:\WorkSpace\mr2\MiconRacer2\Debug\ncrt0.obj"
+-input="C:\WorkSpace\mr2\MiconRacer2\Debug\firm.obj"
+-input="C:\WorkSpace\mr2\MiconRacer2\Debug\MiconRacer2_type2.obj"
 -output="C:\WorkSpace\mr2\MiconRacer2\Debug\MiconRacer2.abs"
 -change_message=information=1100,1322,1410
 -end
@@ -36,15 +37,15 @@ data_SO
 bss_SO
                                   00000500  00000500         0   1
 data_NE
-                                  00000500  0000052b        2c   2
+                                  00000500  00000589        8a   2
 bss_NE
-                                  0000052c  0000053b        10   2
+                                  0000058a  000005bd        34   2
 data_NO
-                                  0000053c  0000053c         1   1
+                                  000005be  000005be         1   1
 bss_NO
-                                  0000053d  0000053d         0   1
+                                  000005bf  000005bf         0   1
 istack
-                                  0000053e  000005bd        80   2
+                                  000005c0  0000063f        80   2
 interrupt
                                   0000c000  0000c08c        8d   2
 data_SEI
@@ -52,11 +53,11 @@ data_SEI
 data_SOI
                                   0000c08d  0000c08d         0   1
 data_NEI
-                                  0000c08e  0000c0b9        2c   2
+                                  0000c08e  0000c117        8a   2
 data_NOI
-                                  0000c0ba  0000c0ba         1   1
+                                  0000c118  0000c118         1   1
 program
-                                  0000c0bc  0000cd3f       c84   2
+                                  0000c11a  0000d19b      1082   2
 vector
                                   0000fed8  0000ffd7       100   2
 fvector

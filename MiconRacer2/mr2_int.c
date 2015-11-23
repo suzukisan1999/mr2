@@ -45,6 +45,17 @@ void intAN0( void )
 #pragma interrupt intTRAIC (vect=22)
 void intTRAIC( void )
 {
+#if 0
+		static beep_count=0;
+		if( line_data & 0x80){
+			beep(Def_C4);
+			beep_count = 100;
+		}
+		if( --beep_count <= 0 ){
+			beep( OFF );
+		}
+#endif
+		
         p0_7 = ~p0_7;
 
         if( p0_7 == 0 ){
@@ -66,8 +77,8 @@ void intTRAIC( void )
             p0_6 = ~p0_2;
 #endif
         }
-		mr2_line_data = mr2_sensor();
-        mr2_timer_count++;		
+		line_data = sensor();
+        timer_count++;		
 }
 
 

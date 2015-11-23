@@ -1,0 +1,79 @@
+Optimizing Linkage Editor (V.10.01.00.000)        23-Nov-2015 15:23:02
+
+*** Options ***
+
+-subcommand=C:\WorkSpace\mr2\MiconRacer2\R8CWriter\MiconRacer2.m16cl
+-entry=_main
+-noprelink
+-nomessage
+-list="C:\WorkSpace\mr2\MiconRacer2\R8CWriter\MiconRacer2.map"
+-nooptimize
+-start=data_SE,bss_SE,data_SO,bss_SO,data_NE,bss_NE,data_NO,bss_NO,stack,istack,heap_NE/0500,interrupt,rom_NE,rom_NO,data_SEI,data_SOI,data_NEI,data_NOI,switch_table,C$VTBL,program/0C000,vector/0FED8
+-nologo
+-stack
+-total_size
+-library="C:\WorkSpace\mr2\MiconRacer2\R8CWriter\MiconRacer2.lib"
+-input="C:\WorkSpace\mr2\MiconRacer2\R8CWriter\mr2_int.obj"
+-input="C:\WorkSpace\mr2\MiconRacer2\R8CWriter\mr2_lib.obj"
+-input="C:\WorkSpace\mr2\MiconRacer2\R8CWriter\ncrt0.obj"
+-input="C:\WorkSpace\mr2\MiconRacer2\R8CWriter\MiconRacer2_type1.obj"
+-output="C:\WorkSpace\mr2\MiconRacer2\R8CWriter\MiconRacer2.abs"
+-change_message=information=1100,1322,1410
+-end
+
+*** Error information ***
+
+*** Mapping List ***
+
+SECTION                            START      END         SIZE   ALIGN
+
+data_SE
+                                  00000500  00000500         0   2
+bss_SE
+                                  00000500  00000500         0   2
+data_SO
+                                  00000500  00000500         0   1
+bss_SO
+                                  00000500  00000500         0   1
+data_NE
+                                  00000500  00000509         a   2
+bss_NE
+                                  0000050a  00000521        18   2
+data_NO
+                                  00000522  00000522         1   1
+bss_NO
+                                  00000523  00000523         0   1
+istack
+                                  00000524  000005a3        80   2
+interrupt
+                                  0000c000  0000c08c        8d   2
+data_SEI
+                                  0000c08d  0000c08d         0   1
+data_SOI
+                                  0000c08d  0000c08d         0   1
+data_NEI
+                                  0000c08e  0000c097         a   2
+data_NOI
+                                  0000c098  0000c098         1   1
+program
+                                  0000c09a  0000cbc5       b2c   2
+vector
+                                  0000fed8  0000ffd7       100   2
+fvector
+                                  0000ffd8  0000ffff        28   1
+
+*** ID code information ***
+
+CHARACTOR STRING=""
+NUMERICAL VALUE=
+  0000ffdf: ff
+  0000ffe3: ff
+  0000ffeb: ff
+  0000ffef: ff
+  0000fff3: ff
+  0000fff7: ff
+  0000fffb: ff
+
+*** Protect code or OFSREG code information ***
+
+  0000ffff: ff
