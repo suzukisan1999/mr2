@@ -142,6 +142,7 @@ void run_main( void )
 			case SENSOR_R2 :	pos = +2; ooc = 0;	break;
 			case SENSOR_R3 :	pos = +3; ooc = 0;	break;
 			case SENSOR_RC :	pos = +4; ooc = 0;	break;
+			case SENSOR_AB :	pos = pos_log[1]; ooc = 0; break;
 			default :
 				if( pos_log[1] > 0 ){
 					pos = +4;
