@@ -139,6 +139,7 @@
 "C:\WorkSpace\mr2\MiconRacer2\MiconRacer2.c" "User" "C source file" 2 
 "C:\WorkSpace\mr2\MiconRacer2\MiconRacer2_type1.c" "User" "C source file" 2 
 "C:\WorkSpace\mr2\MiconRacer2\MiconRacer2_type2.c" "User" "C source file" 2 
+"C:\WorkSpace\mr2\MiconRacer2\MiconRacer2_type3.c" "User" "C source file" 2 
 "C:\WorkSpace\mr2\MiconRacer2\firm.c" "User" "C source file" 2 
 "C:\WorkSpace\mr2\MiconRacer2\mr2_int.c" "User" "C source file" 2 
 "C:\WorkSpace\mr2\MiconRacer2\mr2_lib.c" "User" "C source file" 2 
@@ -159,7 +160,7 @@
 [GENERAL_DATA_SESSION_DefaultSession]
 [GENERAL_DATA_SESSION_SessionM16C_R8C_FoUSB_UART]
 [OPTIONS_Debug_R8C Writer]
-"Single Shot" "0f23e1a9e4621d10" 7 
+"Single Shot" "0903ffa558821d10" 7 
 [OPTIONS_Debug_Renesas M16C Assembler]
 "Assembly source file" "09b624446ee11d10" 4 
 "C:\WorkSpace\mr2\MiconRacer2\ncrt0.a30" "09b624446ee11d10" 4 
@@ -169,17 +170,18 @@
 "C:\WorkSpace\mr2\MiconRacer2\MiconRacer2.c" "03ba052a60621d10" 2 
 "C:\WorkSpace\mr2\MiconRacer2\MiconRacer2_type1.c" "03ba052a60621d10" 2 
 "C:\WorkSpace\mr2\MiconRacer2\MiconRacer2_type2.c" "0f23e1a9e4621d10" 2 
+"C:\WorkSpace\mr2\MiconRacer2\MiconRacer2_type3.c" "0903ffa558821d10" 2 
 "C:\WorkSpace\mr2\MiconRacer2\firm.c" "03ba052a60621d10" 2 
 "C:\WorkSpace\mr2\MiconRacer2\mr2_int.c" "03ba052a60621d10" 2 
 "C:\WorkSpace\mr2\MiconRacer2\mr2_lib.c" "03ba052a60621d10" 2 
 [OPTIONS_Debug_Renesas M16C C/C++ Library Generator]
 "Single Shot" "0fc6c92d76121d10" 1 
 [OPTIONS_Debug_Renesas M16C Configurator]
-"Single Shot" "0f23e1a9e4621d10" 6 
+"Single Shot" "0903ffa558821d10" 6 
 [OPTIONS_Debug_Renesas M16C ConfiguratorR8C]
-"Single Shot" "0f23e1a9e4621d10" 6 
+"Single Shot" "0903ffa558821d10" 6 
 [OPTIONS_Debug_Renesas OptLinker]
-"Single Shot" "0b1628c9e4621d10" 5 
+"Single Shot" "090479d558821d10" 5 
 [OPTIONS_Debug]
 "" 0 
 "/f=^"$(CONFIGDIR)\$(WORKSPNAME).mot^" /n=^"USB Serial Port^" /s=1 /e=1" 7 
@@ -198,6 +200,7 @@
 [EXCLUDED_FILES_Debug]
 "C:\WorkSpace\mr2\MiconRacer2\MiconRacer2.c" 
 "C:\WorkSpace\mr2\MiconRacer2\MiconRacer2_type1.c" 
+"C:\WorkSpace\mr2\MiconRacer2\MiconRacer2_type2.c" 
 [LINKAGE_ORDER_Debug]
 "c:\workspace\mr2\miconracer2\debug\miconracer2.lib" 
 "c:\workspace\mr2\miconracer2\debug\miconracer2.obj" 
@@ -206,7 +209,7 @@
 "c:\workspace\mr2\miconracer2\debug\ncrt0.obj" 
 [GENERAL_DATA_CONFIGURATION_Debug]
 [OPTIONS_Debug_M16C_R8C_FoUSB_UART_R8C Writer]
-"Single Shot" "0f23e1a9e4621d10" 0 
+"Single Shot" "0903ffa558821d10" 0 
 [OPTIONS_Debug_M16C_R8C_FoUSB_UART_Renesas M16C Assembler]
 "Assembly source file" "09b624446ee11d10" 4 
 "C:\WorkSpace\mr2\MiconRacer2\ncrt0.a30" "09b624446ee11d10" 4 
@@ -216,17 +219,18 @@
 "C:\WorkSpace\mr2\MiconRacer2\MiconRacer2.c" "09b624446ee11d10" 2 
 "C:\WorkSpace\mr2\MiconRacer2\MiconRacer2_type1.c" "03ab461930621d10" 2 
 "C:\WorkSpace\mr2\MiconRacer2\MiconRacer2_type2.c" "0f23e1a9e4621d10" 2 
+"C:\WorkSpace\mr2\MiconRacer2\MiconRacer2_type3.c" "0903ffa558821d10" 2 
 "C:\WorkSpace\mr2\MiconRacer2\firm.c" "0292eea650621d10" 2 
 "C:\WorkSpace\mr2\MiconRacer2\mr2_int.c" "0f692ad7a2f11d10" 2 
 "C:\WorkSpace\mr2\MiconRacer2\mr2_lib.c" "082e10ae82f11d10" 2 
 [OPTIONS_Debug_M16C_R8C_FoUSB_UART_Renesas M16C C/C++ Library Generator]
 "Single Shot" "09b624446ee11d10" 1 
 [OPTIONS_Debug_M16C_R8C_FoUSB_UART_Renesas M16C Configurator]
-"Single Shot" "0f23e1a9e4621d10" 6 
+"Single Shot" "0903ffa558821d10" 6 
 [OPTIONS_Debug_M16C_R8C_FoUSB_UART_Renesas M16C ConfiguratorR8C]
-"Single Shot" "0f23e1a9e4621d10" 6 
+"Single Shot" "0903ffa558821d10" 6 
 [OPTIONS_Debug_M16C_R8C_FoUSB_UART_Renesas OptLinker]
-"Single Shot" "0829f1a9e4621d10" 5 
+"Single Shot" "08be30b558821d10" 5 
 [OPTIONS_Debug_M16C_R8C_FoUSB_UART]
 "" 0 
 "[V|VERSION|1] [B|COMMAND|1] [S|SPEC|UITRON4] " 6 
@@ -247,7 +251,7 @@
 "c:\workspace\mr2\miconracer2\debug_m16c_r8c_fousb_uart\ncrt0.obj" 
 [GENERAL_DATA_CONFIGURATION_Debug_M16C_R8C_FoUSB_UART]
 [OPTIONS_R8CWriter_R8C Writer]
-"Single Shot" "0f23e1a9e4621d10" 7 
+"Single Shot" "0903ffa558821d10" 7 
 [OPTIONS_R8CWriter_Renesas M16C Assembler]
 "Assembly source file" "09b624446ee11d10" 4 
 "C:\WorkSpace\mr2\MiconRacer2\ncrt0.a30" "09b624446ee11d10" 4 
@@ -257,17 +261,18 @@
 "C:\WorkSpace\mr2\MiconRacer2\MiconRacer2.c" "0dd46eb6cff11d10" 2 
 "C:\WorkSpace\mr2\MiconRacer2\MiconRacer2_type1.c" "03ab461930621d10" 2 
 "C:\WorkSpace\mr2\MiconRacer2\MiconRacer2_type2.c" "0f23e1a9e4621d10" 2 
+"C:\WorkSpace\mr2\MiconRacer2\MiconRacer2_type3.c" "0903ffa558821d10" 2 
 "C:\WorkSpace\mr2\MiconRacer2\firm.c" "0292eea650621d10" 2 
 "C:\WorkSpace\mr2\MiconRacer2\mr2_int.c" "0dd46eb6cff11d10" 2 
 "C:\WorkSpace\mr2\MiconRacer2\mr2_lib.c" "0dd46eb6cff11d10" 2 
 [OPTIONS_R8CWriter_Renesas M16C C/C++ Library Generator]
 "Single Shot" "0fc6c92d76121d10" 1 
 [OPTIONS_R8CWriter_Renesas M16C Configurator]
-"Single Shot" "0f23e1a9e4621d10" 6 
+"Single Shot" "0903ffa558821d10" 6 
 [OPTIONS_R8CWriter_Renesas M16C ConfiguratorR8C]
-"Single Shot" "0f23e1a9e4621d10" 6 
+"Single Shot" "0903ffa558821d10" 6 
 [OPTIONS_R8CWriter_Renesas OptLinker]
-"Single Shot" "0829f1a9e4621d10" 5 
+"Single Shot" "08be30b558821d10" 5 
 [OPTIONS_R8CWriter]
 "" 0 
 "/f=^"$(CONFIGDIR)\$(WORKSPNAME).mot^" /n=^"USB Serial Port^" /s=1 /e=1" 7 
@@ -292,7 +297,7 @@
 "C:\WorkSpace\mr2\MiconRacer2\R8CWriter\ncrt0.obj" 
 [GENERAL_DATA_CONFIGURATION_R8CWriter]
 [OPTIONS_Release_R8C Writer]
-"Single Shot" "0f23e1a9e4621d10" 0 
+"Single Shot" "0903ffa558821d10" 0 
 [OPTIONS_Release_Renesas M16C Assembler]
 "Assembly source file" "09b624446ee11d10" 4 
 "C:\WorkSpace\mr2\MiconRacer2\ncrt0.a30" "09b624446ee11d10" 4 
@@ -302,17 +307,18 @@
 "C:\WorkSpace\mr2\MiconRacer2\MiconRacer2.c" "09b624446ee11d10" 2 
 "C:\WorkSpace\mr2\MiconRacer2\MiconRacer2_type1.c" "03ab461930621d10" 2 
 "C:\WorkSpace\mr2\MiconRacer2\MiconRacer2_type2.c" "0f23e1a9e4621d10" 2 
+"C:\WorkSpace\mr2\MiconRacer2\MiconRacer2_type3.c" "0903ffa558821d10" 2 
 "C:\WorkSpace\mr2\MiconRacer2\firm.c" "0292eea650621d10" 2 
 "C:\WorkSpace\mr2\MiconRacer2\mr2_int.c" "0f692ad7a2f11d10" 2 
 "C:\WorkSpace\mr2\MiconRacer2\mr2_lib.c" "082e10ae82f11d10" 2 
 [OPTIONS_Release_Renesas M16C C/C++ Library Generator]
 "Single Shot" "09b624446ee11d10" 1 
 [OPTIONS_Release_Renesas M16C Configurator]
-"Single Shot" "0f23e1a9e4621d10" 6 
+"Single Shot" "0903ffa558821d10" 6 
 [OPTIONS_Release_Renesas M16C ConfiguratorR8C]
-"Single Shot" "0f23e1a9e4621d10" 6 
+"Single Shot" "0903ffa558821d10" 6 
 [OPTIONS_Release_Renesas OptLinker]
-"Single Shot" "0829f1a9e4621d10" 5 
+"Single Shot" "08be30b558821d10" 5 
 [OPTIONS_Release]
 "" 0 
 "[V|VERSION|1] [B|COMMAND|1] [S|SPEC|UITRON4] " 6 

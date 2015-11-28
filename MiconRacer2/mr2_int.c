@@ -39,13 +39,16 @@ void intAN0( void )
 
 
 
-// line censor
+// line sensor
 // cyclic handler
 // priority : 2 (middle)
 #pragma interrupt intTRAIC (vect=22)
 void intTRAIC( void )
 {
-#if 0
+		int i;
+        static unsigned int count = 0;
+
+#if BEEP_DEADLINE > 0
 		static beep_count=0;
 		if( line_data & 0x80){
 			beep(Def_C4);
@@ -78,7 +81,25 @@ void intTRAIC( void )
 #endif
         }
 		line_data = sensor();
-        timer_count++;		
+
+		for( i=0; i<TIMER_NUM; i++ ){
+	        timer_count[i]++;
+		}
+
+        if( (count % TIMER_PERIOD) == 0 ){
+            timer_flag++;
+        }
+        if( (count % CONTROL_PERIOD) == 0 ){
+            cont_flag++;
+        }
+        if( (count % OPERATION_PERIOD) == 0 ){
+            opr_flag++;
+        }
+        if( (count % VEHICLE_PERIOD) == 0 ){
+            veh_flag++;
+        }
+        
+        count++;
 }
 
 

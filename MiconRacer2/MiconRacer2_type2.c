@@ -18,24 +18,29 @@
 #pragma CREG	_flg_	flg
 unsigned int	_flg_;
 
-#define	POS_MAX		(30)
+#define	POS_MAX		(10)
 int pos_log[POS_MAX] = {};
+int dist_log[POS_MAX] = {};
 
-#define DAKOU_MAX	(15)
+#define DAKOU_PERIOD	(20)
+#define DAKOU_MAX		(10)
 int	dakou_log[DAKOU_MAX] = {};
 int dakou_ptr = 0;
 #define DAKOU_PUSH(x)	do{ dakou_log[dakou_ptr++] = x; dakou_ptr %= DAKOU_MAX; }while(0)
 
-#define BEEP_MAX	(100)
+#define BEEP_MAX	(100)		// ビープの長さ (ms)
 #define BEEP(x)		beep(x)
 //#define BEEP(x)		do{}while(0)
 
 
 #define	BEEP_LOGERR		OFF
 #define	BEEP_TOBI		OFF
-#define	BEEP_DAKOU		Def_C4
+#define	BEEP_DAKOU		OFF
 #define	BEEP_POWLOW		OFF
 #define BEEP_POWMAX		OFF
+#define BEEP_POWUP		Def_C4
+#define BEEP_POWDOWN	Def_C3
+#define BEEP_TYOKKAKU	OFF
 
 #define CENTER	(4)
 #define	DISTANCE(x)	distance_def[CENTER+pos_log[x]]
@@ -44,12 +49,128 @@ int dakou_ptr = 0;
 #define	POWER_HALF (int)((float)500 * (50.0F/(float)MOTOR_LIMIT))
 #define	POWER_SLOW (int)((float)750 * (50.0F/(float)MOTOR_LIMIT))
 
+#define Dup		(2)		// 加速時Power増分
+#define Ddown	(4)		// 減速時Power増分
+
+#define Tcool	(500)	// Cooldown time (ms)
+#define Tup		(200)	// Power up time (ms)
+#define	Tdown	(500)	// Power down time (ms)
+#define Ttyoku	(1000)	// 直角検出時のPower down time (ms)
+#define	Tooc	(1000)	// コースを外れて止まるまでの時間 (ms)
+
+#define	THup	(1500)	// 速度アップのしきい値(積分)
+#define THdown	(3000)	// 速度ダウンのしきい値(積分)
+
 #define SCALING		(20)
 #define myabs(x)	((x) >= 0 ? (x) : -(x))
 
 //------------------------------------------------------------------------------
 // メインプログラム
 //------------------------------------------------------------------------------
+
+unsigned int			led_monen = 0;			// LEDモニタイネーブル 
+unsigned int			senser_lcut[4];			// センサー調整
+unsigned int			senser_hcut[4];			// センサー調整
+unsigned int			senser_range[4];		// センサー調整
+
+//------------------------------------------------------------------------------
+// LEDモニタ
+//------------------------------------------------------------------------------
+void ledoff ( void ){
+	p0_5 = 0;
+	p0_6 = 0;
+	p0_7 = 0;
+}
+
+void ledmon (unsigned int dnum){
+	if (dnum == 0) {
+		p0_5 = 0;
+		p0_6 = 1;
+		p0_7 = 0;
+	}
+	if (dnum == 1) {
+		p0_5 = 1;
+		p0_6 = 0;
+		p0_7 = 1;
+	}
+	if (dnum == 2) {
+		p0_5 = 1;
+		p0_6 = 0;
+		p0_7 = 0;
+	}
+	if (dnum == 3) {
+		p0_5 = 0;
+		p0_6 = 1;
+		p0_7 = 1;
+	}
+}
+
+//------------------------------------------------------------------------------
+// センサーキャリブレーション
+//------------------------------------------------------------------------------
+void senser_calibration_w ( void ){
+	senser_lcut[0] = ad4;
+	senser_lcut[1] = ad5;
+	senser_lcut[2] = ad6;
+	senser_lcut[3] = ad7;
+}
+
+void senser_calibration_b ( void ){
+	senser_hcut[0] = ad4;
+	senser_hcut[1] = ad5;
+	senser_hcut[2] = ad6;
+	senser_hcut[3] = ad7;
+}
+
+
+//------------------------------------------------------------------------------
+// 位置情報取得
+//------------------------------------------------------------------------------
+//
+// ↑進行方向
+//
+//   -20mm  -5mm  0  5mm     20mm 
+//    |--------|--|--|--------|
+//  -128          0          128   ←戻り値
+// +-----------------------------+
+// |                             |
+// |  □       □   □       □  | センサーが裏側に付いているイメージ
+// |  0        1     2        3  |
+// |                             |
+// |  ●sw                  +----|
+// |                        | USB|
+// |                        +----|
+
+#define SEN_THR_SENSE	100
+
+int get_position(void){
+	signed int			position;
+	unsigned int		sensor_val[4];
+	static unsigned int	sensor[4];
+
+	int	i;
+	
+	sensor_val[0] = ad4;
+	sensor_val[1] = ad5;
+	sensor_val[2] = ad6;
+	sensor_val[3] = ad7;
+	
+	for(i=0;i<4;i++) {
+		if ( (sensor_val[0]>SEN_THR_SENSE) || (sensor_val[1]>SEN_THR_SENSE) || (sensor_val[2]>SEN_THR_SENSE) || (sensor_val[3]>SEN_THR_SENSE) ) {
+			if (sensor_val[i] < senser_lcut[i]) sensor_val[i]=0; else sensor_val[i]=sensor_val[i] - senser_lcut[i];
+			if (sensor_val[i] > senser_hcut[i]) sensor_val[i]=senser_hcut[i];
+
+			sensor[i]=(int)((long)sensor_val[i] * 127/((long)senser_hcut[i]-(long)senser_lcut[i]));
+		}
+  	}
+
+	position = (-1*sensor[0]) + (-0.3*sensor[1]) + ( 0.3*sensor[2]) + ( 1*sensor[3]);
+
+	return (position);
+}
+
+
+
 
 long long int Kp = 210;
 long long int Kd = 31457;
@@ -58,15 +179,27 @@ long long int Ki = 5243;
 long long int p, i, d;
 long long int fx_dist, fx_diff, fx_intg;
 
-float	fKp = 0.0002F;
-float	fKd = 0.03F;
-float	fKi = 0.005F;
+float	K1[] = { 0.1F,	0.05F,	0.005F };
+float	K2[] = { 0.05F,	0.03F,	0.005F };
+
+float	fKp = 0.1F;
+float	fKd = 0.05F;
+float	fKi = 0.00F;
+
+//float	fKp = 0.0001F;
+//float	fKd = 0.17F;
+//float	fKi = 0.01F;
+
+//float	fKp = 0.0002F;
+//float	fKd = 0.03F;
+//float	fKi = 0.005F;
 
 int pid_float( int dist, int diff, int intg )
 {
 	int p, i, d;
 
-	p = (int)( fKp * (float)dist * (float)myabs(dist) );
+//	p = (int)( fKp * (float)dist * (float)myabs(dist) );
+	p = (int)( fKp * (float)dist );
 	d = (int)( fKd * (float)diff );
 	i = (int)( fKi * (float)intg );
 		
@@ -104,24 +237,36 @@ void run_main( void )
 	int tobi, dakou, instab;
 	int pole, side_r, side_l;
 	int	dakou_intg;
+	int tyokkaku;
 	
 	int beep_count;
 	int error;
-	int power_down, power_up, power_off;
+	int power_down, power_up, power_off, cooldown;
 	int	power;
+	
+	int	all_black;
 
-	ooc = 0;
+	ooc        = 0;
 	beep_count = 0;
-	power = 100;
-	cyc_cnt = 0;
+	power      = 500;
+	power_down = 0;
+	power_up   = 0;
+	cyc_cnt    = 0;
 	dakou_intg = 0;
-    while(1){		
+	cooldown   = Tcool;
+	tyokkaku   = 0;
+
+    while(1){
+
+		all_black = 0;
+		
 		read_line = sensor_check();		// ラインセンサーから最新情報を取得
 
 		// position log
 		error = 0;
 		for( i=POS_MAX-1; i>0; i-- ){
-			pos_log[i] = pos_log[i-1];
+			dist_log[i] = dist_log[i-1];
+			pos_log[i]  = pos_log[i-1];
 			     if( pos_log[i] >  1024 ){ error = 1; }
 			else if( pos_log[i] < -1024 ){ error = 1; }
 		}
@@ -142,7 +287,7 @@ void run_main( void )
 			case SENSOR_R2 :	pos = +2; ooc = 0;	break;
 			case SENSOR_R3 :	pos = +3; ooc = 0;	break;
 			case SENSOR_RC :	pos = +4; ooc = 0;	break;
-			case SENSOR_AB :	pos = pos_log[1]; ooc = 0; break;
+			case SENSOR_AB :	pos = pos_log[1]; ooc = 0; all_black = 1; break;
 			default :
 				if( pos_log[1] > 0 ){
 					pos = +4;
@@ -156,7 +301,21 @@ void run_main( void )
 		}
 		pos_log[0] = pos;
 
-		// 安定性の評価
+		if( timer_count[1] > 1000 ){
+			tyokkaku = 0;
+		}
+		if( (tyokkaku>=3) )
+
+		// 直角サイン検出
+		if( (tyokkaku==0) && (all_black!=0) ){
+			tyokkaku++;
+			timer_count[1] = 0;
+		}else if( (tyokkaku==1) && (all_black==0) ){
+			tyokkaku++;
+		}else if( (tyokkaku==2) && (all_black!=0) ){
+			tyokkaku = Ttyoku;
+			// ここで3になる
+		}
 		
 		// センサ飛び検出
 		tobi = (myabs(pos_log[0]-pos_log[1])>1);
@@ -198,34 +357,54 @@ void run_main( void )
 			beep_count = BEEP_MAX;
 		}
 #endif
-		
-		// 距離での制御
-		dist = DISTANCE(0);
-		
-		// 接近速度での制御（微分）
-		diff = DISTANCE(0)-DISTANCE(1);
+#if BEEP_TYOKKAKU > 0
+		if( tyokkaku >= 3 ){
+			BEEP( BEEP_TYOKKAKU );
+			beep_count = BEEP_MAX;
+		}
+#endif
 
-		// カーブ追従（積分）
-		intg =	((DISTANCE(0)+DISTANCE(1))>>1) +
-				((DISTANCE(1)+DISTANCE(2))>>1) +
-				((DISTANCE(2)+DISTANCE(3))>>1) +
-				((DISTANCE(3)+DISTANCE(4))>>1) +
-				((DISTANCE(4)+DISTANCE(5))>>1);
-
-		// PID
-		dv = pid_float( dist, diff, intg );
-//		dv = pid( dist, diff, intg );
-		SATURATE( dv, 100, -100 );
-
-		// パワーダウン指示
-		power_down = (dakou>0) || (myabs(intg)>3000);
-		power_up   = (myabs(intg)<1500);
+		// パワー制御
+		if( cooldown > 0 ){
+			cooldown--;
+		}
+		if( tyokkaku >= 3 ){
+			tyokkaku--;
+		}
+		if(( power_down <= 0 ) && (dakou>=3) || (myabs(intg)>THdown) || (tyokkaku>0) ){
+			power_down = Tdown;
+#if BEEP_POWDOWN > 0
+			BEEP( BEEP_POWDOWN );
+			beep_count = BEEP_MAX;
+#endif
+		}
+		if(( power_up <= 0 ) && (cooldown<=0) && (myabs(intg)<THup) ){
+#if BEEP_POWUP > 0
+			BEEP( BEEP_POWUP );
+			beep_count = BEEP_MAX;
+#endif
+			power_up = Tup;
+		}
 		
 		// 出力調整
+		fKp = K1[0];
+		fKd = K1[1];
+		fKi = K1[2];
 		if( power_down ){
-			power -= 4;
+			fKp = K2[0];
+			fKd = K2[1];
+			fKi = K2[2];
+			
+			power -= Ddown;
+			power_down--;
+			power_up = 0;
 		}else if( power_up ){
-			power += 1;
+			power += Dup;
+			power_up--;
+			power_down = 0;
+			if ( power_up == 0 ){
+				cooldown = Tcool;
+			}
 		}
 		if( myabs(dist) > 700 ){
 			power = SATURATE( power, 1000, POWER_HALF );
@@ -245,6 +424,39 @@ void run_main( void )
 			beep_count = BEEP_MAX;
 		}
 #endif
+
+#if 1
+		// 距離での制御
+		dist = DISTANCE(0);
+		
+		// 接近速度での制御（微分）
+		diff = DISTANCE(0)-DISTANCE(1);
+
+		// カーブ追従（積分）
+		intg =	((DISTANCE(0)+DISTANCE(1))>>1) +
+				((DISTANCE(1)+DISTANCE(2))>>1) +
+				((DISTANCE(2)+DISTANCE(3))>>1) +
+				((DISTANCE(3)+DISTANCE(4))>>1) +
+				((DISTANCE(4)+DISTANCE(5))>>1);
+#else
+		// 距離での制御
+		dist_log[0] = ( SATURATE( get_position(), 127, -127 )<<3 );
+		dist = dist_log[0];
+		
+		// 接近速度での制御（微分）
+		diff =dist_log[0]-dist_log[1];
+
+		// カーブ追従（積分）
+		intg =	((dist_log[0]+dist_log[1])>>1) +
+				((dist_log[1]+dist_log[2])>>1) +
+				((dist_log[2]+dist_log[3])>>1) +
+				((dist_log[3]+dist_log[4])>>1) +
+				((dist_log[4]+dist_log[5])>>1);
+#endif
+		// PID
+		dv = pid_float( dist, diff, intg );
+//		dv = pid( dist, diff, intg );
+		SATURATE( dv, 100, -100 );
 		
 		vr = power/10;
 		vl = power/10;
@@ -259,7 +471,7 @@ void run_main( void )
 		vl = SATURATE( vl, 100, 0 );
 
 		// パワーオフ指示
-		power_off = ooc > 500;
+		power_off = ooc > Tooc;
 		if( power_off ){
 			vr = 0;
 			vl = 0;
@@ -273,7 +485,7 @@ void run_main( void )
 			BEEP( 0 );
 		}
 		
-		cyc_cnt = (cyc_cnt+1) % POS_MAX;
+		cyc_cnt = (cyc_cnt+1) % DAKOU_PERIOD;
 			
 
 	}	// while(1)
@@ -290,7 +502,35 @@ void main(void)
 	peri_init();
 	EI();
 
-	//while( pushsw() == 0 );	// スタートボタン押下待ち
+	while( pushsw() == 0 );	// スタートボタン押下待ち
+
+#if 0
+	// センサーキャリブレーション
+	led_monen = 0;	// LEDモニタディセーブル
+	ledmon(0);
+	while( pushsw() == 0 );	// スタートボタン押下待ち
+	senser_calibration_w();	// 白地でのセンサー値取得
+	timer(0, 100);
+	while( pushsw() != 0 );	// スタートボタン開放待ち
+	ledmon(1);
+	timer(0, 100);
+	while( pushsw() == 0 );	// スタートボタン押下待ち
+	senser_calibration_b();	// 黒地でのセンサー値取得
+	timer(0, 100);
+	while( pushsw() != 0 );	// スタートボタン開放待ち
+
+	ledoff();
+	timer(0, 100);
+	
+	led_monen = 1;	// LEDモニタイネーブル
+
+	while( pushsw() == 0 );	// スタートボタン押下待ち
+	timer(0, 100);
+	while( pushsw() != 0 );	// スタートボタン開放待ち
+#else
+	while( pushsw() != 0 );	// スタートボタン開放待ち
+#endif
+
 	run_main();
 }
 

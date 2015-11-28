@@ -1,13 +1,13 @@
-#ifndef	__LIB__
+#ifndef	__MR2_LIB__
 
-#define __LIB__
+#define __MR2_LIB__
 
 #include "sfr_r834c.h"
 
 //------------------------------------------------------------------------------
 // シンボル定義
 //------------------------------------------------------------------------------
-#define TIMER_CYCLE     155             // 1ms:0.001/(1/(20000000/128))-1
+#define TIMER_CYCLE     (155)             // 1ms:0.001/(1/(20000000/128))-1
 
 #define PWM_CYCLE       999             // 0.4ms:0.001/(1/(20000000/8))-1
 //#define PWM_CYCLE       19999         // 8ms  :0.008/(1/(20000000/8))-1
@@ -68,20 +68,41 @@
 // グローバル変数の宣言
 //------------------------------------------------------------------------------
 
-extern	unsigned long           timer_count;	// タイマーカウンタ
+#define	TIMER_NUM		(4)
+extern	unsigned long           timer_count[TIMER_NUM];	// タイマーカウンタ
 extern	volatile unsigned char	line_data;		// 最新ラインパターン
+extern  int distance_def[9];
+
+#define TIMER_PERIOD        (1)
+#define CONTROL_PERIOD      (10)
+#define OPERATION_PERIOD    (100)
+#define VEHICLE_PERIOD      (1000)
+
+// Synchronize flag
+extern  int timer_flag;
+extern  int cont_flag;
+extern  int opr_flag;
+extern  int veh_flag;
+
+// Communication data inter Multi-rate
+extern  int resp_intg;      // RESPONSE_PERIOD区間の距離の積分値
+
 
 //------------------------------------------------------------------------------
 // プロトタイプ宣言
 //------------------------------------------------------------------------------
-
 extern	void clock_init( void );
 extern	void peri_init( void );
 extern	unsigned char sensor( void );
 extern	unsigned char sensor_check( void );
 extern	void motor( int, int );
-extern	void timer( unsigned long );
+extern	void timer( int, unsigned long );
 extern	void beep( int );
 extern	unsigned char pushsw( void );
+extern  void senser_calibration_w ( void );
+extern  void senser_calibration_b ( void );
+extern  int get_position(void);
+extern  void ledoff ( void );
+extern  void ledmon (unsigned int );
 
-#endif	// ifndef __LIB__
+#endif	// ifndef __MR2__LIB__

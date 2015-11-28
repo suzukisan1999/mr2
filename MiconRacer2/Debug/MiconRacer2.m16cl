@@ -12,7 +12,7 @@
 -input="C:\WorkSpace\mr2\MiconRacer2\Debug\mr2_lib.obj"
 -input="C:\WorkSpace\mr2\MiconRacer2\Debug\ncrt0.obj"
 -input="C:\WorkSpace\mr2\MiconRacer2\Debug\firm.obj"
--input="C:\WorkSpace\mr2\MiconRacer2\Debug\MiconRacer2_type2.obj"
+-input="C:\WorkSpace\mr2\MiconRacer2\Debug\MiconRacer2_type3.obj"
 -output="C:\WorkSpace\mr2\MiconRacer2\Debug\MiconRacer2.abs"
 -change_message=information=1100,1322,1410
 -end

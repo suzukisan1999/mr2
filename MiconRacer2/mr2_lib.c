@@ -5,9 +5,14 @@
 // グローバル変数
 //------------------------------------------------------------------------------
 
-
-unsigned long	timer_count = 0;       // timer関数用
+unsigned long   timer_count[TIMER_NUM] = {};
+	// タイマーカウンタ
 volatile char	line_data = 0;	// 最新ラインパターン
+
+unsigned int			led_monen = 0;			// LEDモニタイネーブル 
+unsigned int			senser_lcut[4];			// センサー調整
+unsigned int			senser_hcut[4];			// センサー調整
+unsigned int			senser_range[4];		// センサー調整
 
 //------------------------------------------------------------------------------
 // センサー状態検出
@@ -180,7 +185,6 @@ void peri_init( void )
 		adcon1  = 0x30;                 // 10ビットモード、AD動作可能
 		adic 	= 0x01;					// A/D割り込み 優先レベル：1
 		adst    = 1;                    // A/D変換スタート
-		
 }
 
 //------------------------------------------------------------------------------
@@ -188,10 +192,13 @@ void peri_init( void )
 // 引数         タイマ値 1=1ms
 // 戻り値       なし
 //------------------------------------------------------------------------------
-void timer( unsigned long data1 )
+void timer( int num, unsigned long wait )
 {
-        timer_count = 0;
-        while( timer_count < data1 );
+	if( num < 0 ){	return; }
+	if( num >= TIMER_NUM ){ return; }
+	
+    timer_count[num] = 0;
+    while( timer_count[num] < wait );
 }
 
 //------------------------------------------------------------------------------
@@ -220,3 +227,95 @@ unsigned char pushsw( void )
         return( data1 );
 }
 
+
+//------------------------------------------------------------------------------
+// 位置情報取得
+//------------------------------------------------------------------------------
+//
+// ↑進行方向
+//
+//   -20mm  -5mm  0  5mm     20mm 
+//    |--------|--|--|--------|
+//  -128          0          128   ←戻り値
+// +-----------------------------+
+// |                             |
+// |  □       □   □       □  | センサーが裏側に付いているイメージ
+// |  0        1     2        3  |
+// |                             |
+
+#define SEN_THR_SENSE	100
+
+void senser_calibration_w ( void ){
+	senser_lcut[0] = ad4;
+	senser_lcut[1] = ad5;
+	senser_lcut[2] = ad6;
+	senser_lcut[3] = ad7;
+}
+
+void senser_calibration_b ( void ){
+	senser_hcut[0] = ad4;
+	senser_hcut[1] = ad5;
+	senser_hcut[2] = ad6;
+	senser_hcut[3] = ad7;
+}
+
+
+
+int get_position(void){
+	signed int			position;
+	unsigned int		sensor_val[4];
+	static unsigned int	sensor[4];
+
+	int	i;
+	
+	sensor_val[0] = ad4;
+	sensor_val[1] = ad5;
+	sensor_val[2] = ad6;
+	sensor_val[3] = ad7;
+	
+	for(i=0;i<4;i++) {
+		if ( (sensor_val[0]>SEN_THR_SENSE) || (sensor_val[1]>SEN_THR_SENSE) || (sensor_val[2]>SEN_THR_SENSE) || (sensor_val[3]>SEN_THR_SENSE) ) {
+			if (sensor_val[i] < senser_lcut[i]) sensor_val[i]=0; else sensor_val[i]=sensor_val[i] - senser_lcut[i];
+			if (sensor_val[i] > senser_hcut[i]) sensor_val[i]=senser_hcut[i];
+
+			sensor[i]=(int)((long)sensor_val[i] * 127/((long)senser_hcut[i]-(long)senser_lcut[i]));
+		}
+  	}
+
+	position = (-1*sensor[0]) + (-0.3*sensor[1]) + ( 0.3*sensor[2]) + ( 1*sensor[3]);
+
+	return (position);
+}
+
+
+//------------------------------------------------------------------------------
+// LEDモニタ
+//------------------------------------------------------------------------------
+void ledoff ( void ){
+	p0_5 = 0;
+	p0_6 = 0;
+	p0_7 = 0;
+}
+
+void ledmon (unsigned int dnum){
+	if (dnum == 0) {
+		p0_5 = 0;
+		p0_6 = 1;
+		p0_7 = 0;
+	}
+	if (dnum == 1) {
+		p0_5 = 1;
+		p0_6 = 0;
+		p0_7 = 1;
+	}
+	if (dnum == 2) {
+		p0_5 = 1;
+		p0_6 = 0;
+		p0_7 = 0;
+	}
+	if (dnum == 3) {
+		p0_5 = 0;
+		p0_6 = 1;
+		p0_7 = 1;
+	}
+}

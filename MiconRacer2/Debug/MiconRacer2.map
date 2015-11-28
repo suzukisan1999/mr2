@@ -1,4 +1,4 @@
-Optimizing Linkage Editor (V.10.01.00.000)        24-Nov-2015 17:54:06
+Optimizing Linkage Editor (V.10.01.00.000)        27-Nov-2015 20:27:34
 
 *** Options ***
 
@@ -17,7 +17,7 @@ Optimizing Linkage Editor (V.10.01.00.000)        24-Nov-2015 17:54:06
 -input="C:\WorkSpace\mr2\MiconRacer2\Debug\mr2_lib.obj"
 -input="C:\WorkSpace\mr2\MiconRacer2\Debug\ncrt0.obj"
 -input="C:\WorkSpace\mr2\MiconRacer2\Debug\firm.obj"
--input="C:\WorkSpace\mr2\MiconRacer2\Debug\MiconRacer2_type2.obj"
+-input="C:\WorkSpace\mr2\MiconRacer2\Debug\MiconRacer2_type3.obj"
 -output="C:\WorkSpace\mr2\MiconRacer2\Debug\MiconRacer2.abs"
 -change_message=information=1100,1322,1410
 -end
@@ -37,15 +37,15 @@ data_SO
 bss_SO
                                   00000500  00000500         0   1
 data_NE
-                                  00000500  00000589        8a   2
+                                  00000500  000005b5        b6   2
 bss_NE
-                                  0000058a  000005bd        34   2
+                                  000005b6  000005eb        36   2
 data_NO
-                                  000005be  000005be         1   1
+                                  000005ec  000005ec         1   1
 bss_NO
-                                  000005bf  000005bf         0   1
+                                  000005ed  000005ed         1   1
 istack
-                                  000005c0  0000063f        80   2
+                                  000005ee  0000066d        80   2
 interrupt
                                   0000c000  0000c08c        8d   2
 data_SEI
@@ -53,11 +53,11 @@ data_SEI
 data_SOI
                                   0000c08d  0000c08d         0   1
 data_NEI
-                                  0000c08e  0000c117        8a   2
+                                  0000c08e  0000c143        b6   2
 data_NOI
-                                  0000c118  0000c118         1   1
+                                  0000c144  0000c144         1   1
 program
-                                  0000c11a  0000d1a7      108e   2
+                                  0000c146  0000d035       ef0   2
 vector
                                   0000fed8  0000ffd7       100   2
 fvector
