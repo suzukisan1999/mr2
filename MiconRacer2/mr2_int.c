@@ -48,7 +48,7 @@ void intTRAIC( void )
 		int i;
         static unsigned int count = 0;
 
-#if BEEP_DEADLINE > 0
+#if 0
 		static beep_count=0;
 		if( line_data & 0x80){
 			beep(Def_C4);

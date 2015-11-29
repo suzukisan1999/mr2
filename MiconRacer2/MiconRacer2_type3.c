@@ -20,8 +20,6 @@ unsigned int	_flg_;
 
 #define	INTG_MAX		(OPERATION_PERIOD/CONTROL_PERIOD)
 int intg_log[INTG_MAX] = {};
-int intg_ptr = 0;
-#define INTG_PUSH(x)	do{ intg_log[intg_ptr++] = x; intg_ptr %= INTG_MAX; }while(0)
 
 int timer_flag;
 int cont_flag;
@@ -30,21 +28,43 @@ int veh_flag;
 
 int resp_intg;      // CONTROL_PERIOD区間の距離の積分値
 
-#define BEEP_MAX	(100)		// ビープの長さ (ms)
-#define BEEP(x)		beep(x)
-//#define BEEP(x)		do{}while(0)
+int beep_time = 0;
+#define BEEP_PERIOD()			do{ if( beep_time > 0 ){ beep_time--; }else{ beep( OFF ); } }while(0)
+#define BEEP(note, time)		do{ beep(note); beep_time = time; }while(0)
+//#define BEEP(note, time)		do{}while(0)
 
-#define	BEEP_DAKOU		Def_C3
+
+
+/* 複数音を使うやつ */
+#define	BEEP_TARGET		(0)
+#define	BEEP_STATE		(0)
+#define	BEEP_INTEG		(0)
+
+/* 単音 */
+#define BEEP_DAKOU			(Def_C4)
+#define BEEP_EDGE			(Def_C3)
+#define BEEP_NORMAL			(OFF)
+#define BEEP_HISPEED		(OFF)
+
+#define BEEP_DAKOU_START	(OFF)
+#define BEEP_EDGE_START		(OFF)
+#define BEEP_HISPEED_START	(OFF)
+#define BEEP_HISPEED_END	(OFF)
+
+
+
+
 
 #define CENTER	(4)
 #define	DISTANCE(x)	distance_def[CENTER+x]
 #define	SATURATE( in, upper, lower )	(in > upper) ? upper : (in < lower) ? lower : in
 
-#define	POWER_HALF (int)((float)500 * (50.0F/(float)MOTOR_LIMIT))
-#define	POWER_SLOW (int)((float)750 * (50.0F/(float)MOTOR_LIMIT))
+#define SPEED_HI	(700)
+#define SPEED_DR	(400)
+#define SPEED_LO	(250)
 
-#define Dup		(2)		// 加速時Power増分
-#define Ddown	(4)		// 減速時Power増分
+#define	POWER_MIN	(30)
+#define	POWER_MAX	(70)
 
 #define Tcool	(500)	// Cooldown time (ms)
 #define Tup		(200)	// Power up time (ms)
@@ -58,6 +78,26 @@ int resp_intg;      // CONTROL_PERIOD区間の距離の積分値
 
 #define myabs(x)	((x) >= 0 ? (x) : -(x))
 
+#define	THdakou	(400)	// 蛇行検出用の値(積分値が一定異常で横にふれていると判断)
+
+
+#define	DAKOU_MAX	(V_O_RATIO)
+int	dakou_left_log[DAKOU_MAX] = {};
+int	dakou_right_log[DAKOU_MAX] = {};
+int dakou_ptr = 0;
+
+#define	COOLDOWN_TIME	(3)	// n * OPERATION_PERIOD
+#define	HISPEED_TIME	(2)		// n * OPERATION_PERIOD
+
+int hispeed  = 0;
+int cooldown = COOLDOWN_TIME;
+
+#define		STATE_NORMAL	(0)
+#define		STATE_DAKOU		(1)
+#define		STATE_EDGE		(2)
+#define		STATE_HISPEED	(3)
+
+
 //------------------------------------------------------------------------------
 // メインプログラム
 //------------------------------------------------------------------------------
@@ -65,20 +105,34 @@ int resp_intg;      // CONTROL_PERIOD区間の距離の積分値
 unsigned char position;
 int distance_def[9] = { -1024, -672, -416, -160, 0, 160, 416, 672, 1024 };
 
-float	Kv[] = { 0.03F,	0.0F,	0.0F };
-float	Kl[] = { 0.04F,	0.025F,	0.0005F };
+float	Kv[] = { 0.007F, 0.0F, 0.0F };
+float	Kl[] = { 0.06F,  0.2F, 0.003F };
 
 float	fKp = 0;
 float	fKd = 0;
 float	fKi = 0;
 
-//float	fKp = 0.0001F;
-//float	fKd = 0.17F;
-//float	fKi = 0.01F;
+int	left_side = 0;
+int right_side = 0;
 
-//float	fKp = 0.0002F;
-//float	fKd = 0.03F;
-//float	fKi = 0.005F;
+int Detect_dakou = 0;	// 蛇行検出
+int Detect_edge  = 0;	// ラインの端っこにいる
+int Target_Speed = SPEED_DR;
+
+
+int power_log[O_C_RATIO] = {};
+int	power_off = 0;
+
+int Power = POWER_MIN;
+int Speed = 0, Speed_p;
+int Dist, Dist_p;
+
+int	sign1_filter[3][4] = {
+	0,	 1,	  0,   1,
+	0,   1,   1,   0,
+	1,   0,   1,   0
+};
+
 
 int pid_float( int dist, int diff, int intg )
 {
@@ -92,16 +146,12 @@ int pid_float( int dist, int diff, int intg )
 	return( p+d+i );
 }
 
-int	ool = 0;
-int oor = 0;
-
-#define	THdakou	(1000)	// 蛇行検出用の値(積分値が一定異常で横にふれていると判断)
-
 void   timer_main( int position )
 {
     static int dist_p = 0;
     static int intg   = 0;
     int dist;
+	int i, j;
 
     // 制御周期だったら、積分値を送信する
     if( cont_flag > 0 ){
@@ -116,57 +166,66 @@ void   timer_main( int position )
     dist_p = dist;
 
 	if( dist > THdakou ){
-		oor++;
+		right_side++;
 	}else if( dist < -THdakou ){
-		ool++;
-	}	
+		left_side++;
+	}
+
+	// L3,R3より外だったら緊急減速
+	if( (position>=3) || (position<=-3) ){
+		Detect_edge = 1;
+		Target_Speed = SPEED_LO;
+	}else{
+		Detect_edge = 0;
+	}
+
+	
+
 
 	return;
 }
 
-#define	C_T_RATIO	(CONTROL_PERIOD   / TIMER_PERIOD    )
-#define	O_C_RATIO	(OPERATION_PERIOD / CONTROL_PERIOD  )
-#define	V_O_RATIO	(VEHICLE_PERIOD   / OPERATION_PERIOD)
 
-int Target_speed = 500;
-int power_log[O_C_RATIO] = {};
-int	power_off = 0;
-int State_dakou = 0;
-int State_cool = 0;
-int State_ooc = 0;
-int Power = 0;
-int Speed, Speed_p;
-int Dist, Dist_p;
+int dv, dl, vr, vl;
+int Pr, Di, In;
 
-void    motor_control( int position )
+void    control_main( int position )
 {
 	int i;
 	int	Kpow;
-    int Pr, Di, In;
-    int dv, dl, vr, vl;
+	int max;
 		
 	//====================================================
 	//  縦方向の制御	
 	//====================================================
-	// Powerから擬似的な速度を算出
-	Kpow  = 100;
+	// 過去の出力Powerから擬似的な速度を算出
+	// Target_Speed指示は0-1000の値で与えるので、
+	// 算出Speedも最大値が1000になるように補正する
+	
 	Speed = 0;
 	for( i=0; i<O_C_RATIO; i++ ){
-		Speed = Speed + Kpow * power_log[i];
-		Kpow  = Kpow - Kpow/O_C_RATIO;
+		Speed = Speed + power_log[i];
 	}
-	Speed = Speed / 100;
+#define	SPEED_RATIO		((100*O_C_RATIO)/1000)
+#if SPEED_RATIO != 1
+	Speed = Speed / SPEED_RATIO;
+#endif
+	Speed = SATURATE( Speed, 1000, 0 );
 
 	// 今回のSpeed制御値
-	Pr = Target_speed - Speed;
-	Di = Speed - Speed_p;
-	In = ( Speed + Speed_p ) >> 1;
-
-	fKp = Kv[0];
-	fKd = Kv[1];
-	fKi = Kv[2];	
-	dv = pid_float( Pr, Di, In )/10;
-	dv = SATURATE( dv, 3, -5 );
+	Pr = Target_Speed - Speed;
+	if( myabs( Pr ) == 0 ){
+		dv = 0;
+	}else if( myabs( Pr )<100 ){
+		dv = 1;
+	}else if( myabs( Pr )<200 ){
+		dv = 2;
+	}else{
+		dv = 3;
+	}
+	if( Pr < 0 ){
+		dv = -dv;
+	}
 
 	//====================================================
 	//  横方向の制御
@@ -178,8 +237,30 @@ void    motor_control( int position )
 	Di = Dist - Dist_p;
 
 	// カーブ追従（積分）
-	In = resp_intg;
-	INTG_PUSH( In );
+	for( i=O_C_RATIO-1; i>0; i-- ){
+		intg_log[i] = intg_log[i-1];
+	}
+	intg_log[0] = resp_intg / C_T_RATIO;
+
+	In = 0;
+	for( i=1; i<O_C_RATIO; i++ ){
+		In = In + ((intg_log[i]+intg_log[i-1])>>1);
+	}
+
+#if BEEP_INTEG > 0
+	        if( myabs(In) < 1000 ){
+		BEEP( Def_C3, 10 );
+	}else 	if( myabs(In) < 2000 ){
+		BEEP( Def_D3, 10 );
+	}else 	if( myabs(In) < 3000 ){
+		BEEP( Def_E3, 10 );
+	}else 	if( myabs(In) < 4000 ){
+		BEEP( Def_F3, 10 );
+	}else{
+		BEEP( Def_G3, 10 );
+	}		
+#endif
+
 
 	// PID
 	fKp = Kl[0];
@@ -189,35 +270,44 @@ void    motor_control( int position )
 	dl = SATURATE( dl, 100, -100 );
 
 	//====================================================
-	//  左右のパワー決め
+	//  左右のバランス
 	//====================================================
-	Power = Power + dv;
-	Power = SATURATE( Power, 100, 0 );
-	
-	vr = Power;
-	vl = Power;
+	vl = 100;
+	vr = 100;
 
 	// balancing
 	if( dl > 0 ){
-		vr = vr - 2*dl;
-		vl = vl - dl;
+		vr = vr - myabs( dl );
 	}else if( dl < 0 ){
-		vr = vr + 2*dl;
-		vl = vl + dl;
+		vl = vl - myabs( dl );
 	}
+	vl = SATURATE( vl, 100, 0 );
+	vr = SATURATE( vr, 100, 0 );
+	
+	//====================================================
+	//  車速の調整
+	//====================================================
+	Power = Power + dv;
+	Power = SATURATE( Power, POWER_MAX, POWER_MIN );
+	vl = ( Power * vl ) / 100;
+	vr = ( Power * vr ) / 100;
 
 	// パワーオフ指示
 	if( power_off ){
-		vr = 0;
 		vl = 0;
+		vr = 0;
 	}
 
-    // モータ出力
-	vr = SATURATE( vr, 100, 0 );
+	//====================================================
+    //  モータ出力
+	//====================================================
 	vl = SATURATE( vl, 100, 0 );
+	vr = SATURATE( vr, 100, 0 );
 	motor( vl, vr );
 
-    // 保存
+	//====================================================
+    //  次の周期へのデータ保存
+	//====================================================
     Dist_p  = Dist;
 	Speed_p = Speed;
 
@@ -225,41 +315,119 @@ void    motor_control( int position )
 	for( i=O_C_RATIO-1; i>0; i-- ){
 		power_log[i] = power_log[i-1];
 	}
-	power_log[0] = Power+(dl>>1);
+	power_log[0] = Power;
 
 	return;
 }
 
-#define	DAKOU_MAX	(V_O_RATIO*2)
-
-int	dakou_log[DAKOU_MAX] = {};
-int dakou_ptr = 0;
 
 void    operation_main( void )
 {
 	int	i;
-	int lineout;
+	static int state   = STATE_NORMAL;
+	static int state_p = STATE_NORMAL;
 
 	// 蛇行検出用ログ
-	dakou_log[(dakou_ptr<<1)]   = oor;
-	dakou_log[(dakou_ptr<<1)+1] = ool;
+	dakou_left_log[dakou_ptr]  = left_side;
+	dakou_right_log[dakou_ptr] = right_side;
+	dakou_ptr ++;
+	dakou_ptr = dakou_ptr % DAKOU_MAX;
+	left_side  = 0;
+	right_side = 0;
+	
+	// State
+	if( Detect_dakou ){
+		state = STATE_DAKOU;
+	}else if( Detect_edge ){
+		state = STATE_EDGE;
+	}else if( (cooldown==0)&&(hispeed==0) ){
+		state = STATE_HISPEED;
+		hispeed = HISPEED_TIME;
+	}else if( hispeed==0 ){
+		state = STATE_NORMAL;
+	}
 
-	dakou_ptr += 2;
-	dakou_ptr %= DAKOU_MAX;
+#if BEEP_NORMAL > 0
+	if(state==STATE_NORMAL){
+		BEEP( BEEP_NORMAL, 20 );
+	}		
+#endif
+#if BEEP_DAKOU > 0
+	if(state==STATE_DAKOU){
+		BEEP( BEEP_DAKOU, 20 );
+	}		
+#endif
+#if BEEP_EDGE > 0
+	if(state==STATE_EDGE){
+		BEEP( BEEP_EDGE, 20 );
+	}		
+#endif
 
-	// ラインずれ検出
-	for( i=0; i<O_C_RATIO; i++ ){
-		lineout += intg_log[i];
-	}			
+
+#if BEEP_STATE > 0
+	if(state==STATE_DAKOU){
+		BEEP( Def_C3, 20 );
+	}else if(state==STATE_EDGE){
+		BEEP( Def_G3, 20 );
+	}else if(state==STATE_HISPEED){
+		BEEP( Def_C4, 20 );
+	}
+#endif
+
+
+	// State変化
+	if( (state_p!=STATE_DAKOU)&&(state==STATE_DAKOU) ){
+#if BEEP_DAKOU_START > 0
+	BEEP( BEEP_DAKOU_START, 50 );
+#endif
+	}
+	if( (state_p!=STATE_EDGE)&&(state==STATE_EDGE) ){
+#if BEEP_EDGE_START > 0
+	BEEP( BEEP_EDGE_START, 50 );
+#endif
+	}
+	if( (state_p!=STATE_HISPEED)&&(state==STATE_HISPEED) ){
+		cooldown = COOLDOWN_TIME + HISPEED_TIME;
+#if BEEP_HISPEED_START > 0
+	BEEP( BEEP_HISPEED_START, 50 );
+#endif
+	}
+	if( (state_p==STATE_HISPEED)&&(state!=STATE_HISPEED) ){
+#if BEEP_HISPEED_END > 0
+	BEEP( BEEP_HISPEED_END, 50 );
+#endif
+	}
 
 	// 速度指令
-	if( State_cool ){
-		Target_speed = 250;
-	}else if( State_dakou ){
-		Target_speed = 250;
+	if( (state==STATE_DAKOU) || (state==STATE_EDGE)){
+		Target_Speed = SPEED_LO;
+	}else if( (state==STATE_HISPEED) ){
+		Target_Speed = SPEED_HI;
 	}else{
-		Target_speed = 700;
+		Target_Speed = SPEED_DR;
 	}
+
+#if BEEP_TARGET > 0
+	if( Target_Speed == SPEED_LO ){
+		BEEP( Def_C3, 20 );
+	}else if( Target_Speed == SPEED_DR ){
+		BEEP( Def_G3, 20 );
+	}else if( Target_Speed == SPEED_HI ){
+		BEEP( Def_C4, 20 );
+	}		
+#endif
+
+
+	//====================================================
+    //  次の周期へのデータ保存／更新
+	//====================================================
+	if( hispeed > 0 ){
+		hispeed--;
+	}
+	if( cooldown > 0 ){
+		cooldown--;
+	}
+	state_p = state;
 
 	return;
 }
@@ -271,15 +439,14 @@ void	vehicle_main( void )
 	
 	right = 0;
 	left  = 0;
-	for( i=0; i<(DAKOU_MAX/2); i++ ){
-		right += dakou_log[(i<<1)  ];
-		left  += dakou_log[(i<<1)+1];
+	for( i=0; i<DAKOU_MAX; i++ ){
+		right += dakou_right_log[i];
+		left  += dakou_left_log[i];
 	}
 	if( (right>0) && (left>0) ){
-		State_dakou = 1;
+		Detect_dakou = 1;
 	}else{
-		State_dakou = 0;
-		State_cool  = 100;
+		Detect_dakou = 0;
 	}
 	
 }
@@ -333,7 +500,7 @@ void main(void)
             timer_flag = 0;
         }
         if( cont_flag > 0 ){
-            motor_control( position );
+            control_main( position );
             cont_flag = 0;
         }
         if( opr_flag > 0 ){
@@ -341,8 +508,12 @@ void main(void)
             opr_flag = 0;
         }
 		if( veh_flag > 0 ){
+			vehicle_main();
 			veh_flag = 0;
 		}
+		
+		// ビープ出力の停止
+		BEEP_PERIOD();
 	}
 
 }

@@ -89,7 +89,7 @@
 "{C62E6398-F79C-4FAB-801E-8B1A464777C3}CWatchWnd0Local_Column_Name" "150" 
 "{C62E6398-F79C-4FAB-801E-8B1A464777C3}CWatchWnd0Local_Column_Scope" "0" 
 "{C62E6398-F79C-4FAB-801E-8B1A464777C3}CWatchWnd0Local_Column_Value" "100" 
-"{C62E6398-F79C-4FAB-801E-8B1A464777C3}CWatchWnd0Num_Watch" "6" 
+"{C62E6398-F79C-4FAB-801E-8B1A464777C3}CWatchWnd0Num_Watch" "11" 
 "{C62E6398-F79C-4FAB-801E-8B1A464777C3}CWatchWnd0RamMoniterEnable" "0" 
 "{C62E6398-F79C-4FAB-801E-8B1A464777C3}CWatchWnd0SAMPLING" "1000" 
 "{C62E6398-F79C-4FAB-801E-8B1A464777C3}CWatchWnd0Sym_Watch_0000" "Speed,Speed,     51147,3,NN,Col,N-N,Def,00000000,00000000,[Auto]," 
@@ -98,11 +98,11 @@
 "{C62E6398-F79C-4FAB-801E-8B1A464777C3}CWatchWnd0Sym_Watch_0003" "vr,vr,     51402,3,NN,Col,N-N,Def,00000003,00000000,[Auto]," 
 "{C62E6398-F79C-4FAB-801E-8B1A464777C3}CWatchWnd0Sym_Watch_0004" "vl,vl,     51402,3,NN,Col,N-N,Def,00000004,00000000,[Auto]," 
 "{C62E6398-F79C-4FAB-801E-8B1A464777C3}CWatchWnd0Sym_Watch_0005" "Power,Power,     51195,3,NN,Col,N-N,Def,00000005,00000000,[Auto]," 
-"{C62E6398-F79C-4FAB-801E-8B1A464777C3}CWatchWnd0Sym_Watch_0006" "Speed,Speed,     51240,3,NN,Col,N-N,Def,00000016,00000005,[Auto]," 
-"{C62E6398-F79C-4FAB-801E-8B1A464777C3}CWatchWnd0Sym_Watch_0007" "Kpow,Kpow,     51240,3,NN,Col,N-N,Def,00000017,00000005,[Auto]," 
-"{C62E6398-F79C-4FAB-801E-8B1A464777C3}CWatchWnd0Sym_Watch_0008" "dv,dv,     51136,3,NN,Col,N-N,Def,00000018,00000005,[Auto]," 
-"{C62E6398-F79C-4FAB-801E-8B1A464777C3}CWatchWnd0Sym_Watch_0009" "v,v,     51136,3,NN,Col,N-N,Def,00000019,00000005,[Auto]," 
-"{C62E6398-F79C-4FAB-801E-8B1A464777C3}CWatchWnd0Sym_Watch_0010" "Power,Power,     51168,3,NN,Col,N-N,Def,00000020,00000005,[Auto]," 
+"{C62E6398-F79C-4FAB-801E-8B1A464777C3}CWatchWnd0Sym_Watch_0006" "Dist,Dist,     51285,3,NN,Col,N-N,Def,00000006,00000000,[Auto]," 
+"{C62E6398-F79C-4FAB-801E-8B1A464777C3}CWatchWnd0Sym_Watch_0007" "Dist_p,Dist_p,     51285,3,NN,Col,N-N,Def,00000007,00000000,[Auto]," 
+"{C62E6398-F79C-4FAB-801E-8B1A464777C3}CWatchWnd0Sym_Watch_0008" "Pr,Pr,     51285,3,NN,Col,N-N,Def,00000008,00000000,[Auto]," 
+"{C62E6398-F79C-4FAB-801E-8B1A464777C3}CWatchWnd0Sym_Watch_0009" "Di,Di,     51285,3,NN,Col,N-N,Def,00000009,00000000,[Auto]," 
+"{C62E6398-F79C-4FAB-801E-8B1A464777C3}CWatchWnd0Sym_Watch_0010" "In,In,     51285,3,NN,Col,N-N,Def,00000010,00000000,[Auto]," 
 "{C62E6398-F79C-4FAB-801E-8B1A464777C3}CWatchWnd0Sym_Watch_0011" "dist,dist,     50048,3,NN,Col,N-N,Def,00000021,00000000,[Auto]," 
 "{C62E6398-F79C-4FAB-801E-8B1A464777C3}CWatchWnd0Sym_Watch_0012" "diff,diff,     50048,3,NN,Col,N-N,Def,00000022,00000000,[Auto]," 
 "{C62E6398-F79C-4FAB-801E-8B1A464777C3}CWatchWnd0Sym_Watch_0013" "intg,intg,     50048,3,NN,Col,N-N,Def,00000023,00000000,[Auto]," 
@@ -169,11 +169,11 @@
 [WINDOW_POSITION_STATE_DATA_VD4]
 [WINDOW_Z_ORDER]
 "C:\WorkSpace\mr2\MiconRacer2\MiconRacer2_type3.c" 
-"C:\WorkSpace\mr2\MiconRacer2\Debug\逆アセンブリ" 
+"C:\WorkSpace\mr2\MiconRacer2\mr2_lib.h" 
 "C:\WorkSpace\mr2\MiconRacer2\ncrt0.a30" 
 "C:\WorkSpace\mr2\MiconRacer2\mr2_int.c" 
-"C:\WorkSpace\mr2\MiconRacer2\mr2_lib.h" 
 "C:\WorkSpace\mr2\MiconRacer2\MiconRacer2_type2.c" 
+"C:\WorkSpace\mr2\MiconRacer2\逆アセンブリ" 
 [TARGET_NAME]
 "M16C R8C FoUSB/UART" "" 0 
 [STATUSBAR_STATEINFO_VD1]
@@ -223,8 +223,9 @@
 "c:\workspace\mr2\miconracer2\miconracer2_type1.c" 244 0 1 "{00000000-0000-0000-C000-000000000046}" "" 
 "c:\workspace\mr2\miconracer2\miconracer2_type1.c" 250 1633771873 1 "{00000000-0000-0000-C000-000000000046}" "" 
 "c:\workspace\mr2\miconracer2\miconracer2_type2.c" 496 1633771873 1 "{00000000-0000-0000-C000-000000000046}" "" 
-"c:\workspace\mr2\miconracer2\miconracer2_type2.c" 502 0 1 "{00000000-0000-0000-C000-000000000046}" "" 
-"c:\workspace\mr2\miconracer2\miconracer2_type3.c" 218 51476 1 "{00000000-0000-0000-C000-000000000046}" "" 
-"c:\workspace\mr2\miconracer2\miconracer2_type3.c" 292 51689 1 "{00000000-0000-0000-C000-000000000046}" "" 
-"c:\workspace\mr2\miconracer2\miconracer2_type3.c" 297 51706 1 "{00000000-0000-0000-C000-000000000046}" "" 
+"c:\workspace\mr2\miconracer2\miconracer2_type2.c" 502 198358352 1 "{00000000-0000-0000-C000-000000000046}" "" 
+"c:\workspace\mr2\miconracer2\miconracer2_type3.c" 190 51285 1 "{00000000-0000-0000-C000-000000000046}" "" 
+"c:\workspace\mr2\miconracer2\miconracer2_type3.c" 230 51489 1 "{00000000-0000-0000-C000-000000000046}" "" 
+"c:\workspace\mr2\miconracer2\miconracer2_type3.c" 306 51729 1 "{00000000-0000-0000-C000-000000000046}" "" 
+"c:\workspace\mr2\miconracer2\miconracer2_type3.c" 311 51746 1 "{00000000-0000-0000-C000-000000000046}" "" 
 [END]

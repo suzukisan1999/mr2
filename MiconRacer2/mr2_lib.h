@@ -27,7 +27,6 @@
 #define Def_A3          (11362)           // Éâ:(1/220)/(1/(20000000/8))-1
 #define Def_B3          (10120)           // ÉV:(1/247)/(1/(20000000/8))-1
 #define Def_C4          (9541)            // Éh:(1/262)/(1/(20000000/8))-1
-#define Def_C4          (9541)            // Éh:(1/262)/(1/(20000000/8))-1
 #define OFF				(0)
 
 #define DI()            asm("FCLR I")   // äÑÇËçûÇ›ã÷é~
@@ -76,7 +75,11 @@ extern  int distance_def[9];
 #define TIMER_PERIOD        (1)
 #define CONTROL_PERIOD      (10)
 #define OPERATION_PERIOD    (100)
-#define VEHICLE_PERIOD      (1000)
+#define VEHICLE_PERIOD      (500)
+
+#define	C_T_RATIO	(CONTROL_PERIOD   / TIMER_PERIOD    )
+#define	O_C_RATIO	(OPERATION_PERIOD / CONTROL_PERIOD  )
+#define	V_O_RATIO	(VEHICLE_PERIOD   / OPERATION_PERIOD)
 
 // Synchronize flag
 extern  int timer_flag;
