@@ -42,7 +42,7 @@
 #define CENTER_LINE     BLACK						// 中央ラインの色の設定
 
 #define MOTOR_LIMIT		(100)						// モータ最大出力 : 60%
-#define OPTION_L        (MOTOR_LIMIT)				// 最大回転数設定
+#define OPTION_L        (MOTOR_LIMIT*0.857)				// 最大回転数設定
 #define OPTION_R        (MOTOR_LIMIT)
 
 // LEDセンサー定義  ○：消灯   ●：点灯

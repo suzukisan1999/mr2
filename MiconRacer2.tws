@@ -10,12 +10,14 @@
 "C:\WorkSpace\mr2\MiconRacer2\MiconRacer2_type2.c" 
 "C:\WorkSpace\mr2\MiconRacer2\MiconRacer2_type3.c" 
 "C:\WorkSpace\mr2\MiconRacer2\mr2_int.c" 
+"C:\WorkSpace\mr2\MiconRacer2\mr2_lib.c" 
 "C:\WorkSpace\mr2\MiconRacer2\mr2_lib.h" 
 "C:\WorkSpace\mr2\MiconRacer2\ncrt0.a30" 
 [WORKSPACE_FILE_STATES]
 "C:\WorkSpace\mr2\MiconRacer2\MiconRacer2_type2.c" 275 275 1053 563 0 4 
 "C:\WorkSpace\mr2\MiconRacer2\MiconRacer2_type3.c" -8 -30 1424 716 1 1 
 "C:\WorkSpace\mr2\MiconRacer2\mr2_int.c" 250 250 1053 563 0 3 
+"C:\WorkSpace\mr2\MiconRacer2\mr2_lib.c" 150 150 1183 453 0 6 
 "C:\WorkSpace\mr2\MiconRacer2\mr2_lib.h" 225 225 1053 563 0 2 
 "C:\WorkSpace\mr2\MiconRacer2\ncrt0.a30" 0 0 517 563 0 5 
 [LOADED_PROJECTS]
